@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">심플 메모장</string>
+    <string name="navigation_drawer_open">메뉴 열기</string>
+    <string name="navigation_drawer_close">메뉴 닫기</string>
+    <string name="write">글쓰기</string>
+    <string name="share">메모 공유</string>
+    <string name="delete">메모 삭제</string>
+    <string name="none">사용 안함</string>
+    <string name="seven_day">7일마다</string>
+    <string name="thirty_day">30일마다</string>
+    <string name="auto_delete">휴지통 자동 비우기</string>
+    <string name="big_size">크게</string>
+    <string name="middle_size">보통</string>
+    <string name="small_size">작게</string>
+    <string name="text_size">글자 크기</string>
+    <string name="restore">메모 복구</string>
+    <string name="memo_share_app_select">메모를 공유할 앱 선택</string>
+    <string name="alter">알림</string>
+    <string name="exit_app">프로그램을 종료 하시겠습니까?</string>
+    <string name="ok">확인</string>
+    <string name="cancel">취소</string>
+    <string name="all_memo">모든 메모</string>
+    <string name="setting">환경설정</string>
+    <string name="trash">휴지통</string>
+</resources>

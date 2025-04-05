@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<selector xmlns:android="http://schemas.android.com/apk/res/android">-->
+<!--    <item android:state_checked="true" android:color="#E0E0FF"/> &lt;!&ndash; 선택됨 &ndash;&gt;-->
+<!--    <item android:color="#FFFFFF"/> &lt;!&ndash; 기본 &ndash;&gt;-->
+<!--</selector>-->
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 선택됐을 때 연한 검정색 -->
+    <item android:state_checked="true" android:color="#DDDDDD" />
+    <!-- 기본 배경은 흰색 -->
+    <item android:color="#FFFFFF" />
+</selector>

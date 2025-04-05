@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Simple Notepad</string>
+    <string name="navigation_drawer_open">Open menu</string>
+    <string name="navigation_drawer_close">Close menu</string>
+    <string name="write">Write</string>
+    <string name="share">Share memo</string>
+    <string name="delete">Delete memo</string>
+    <string name="none">None</string>
+    <string name="seven_day">7 days</string>
+    <string name="thirty_day">30 days</string>
+    <string name="auto_delete">Auto delete trash</string>
+    <string name="big_size">Large</string>
+    <string name="middle_size">Medium</string>
+    <string name="small_size">Small</string>
+    <string name="text_size">Text size</string>
+    <string name="restore">Restore memo</string>
+    <string name="memo_share_app_select">Choose an app to share the memo</string>
+    <string name="alter">Notice</string>
+    <string name="exit_app">Do you want to exit the app?</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="all_memo">All Memos</string>
+    <string name="setting">Settings</string>
+    <string name="trash">Trash</string>
+</resources>
