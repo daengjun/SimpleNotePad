@@ -22,4 +22,5 @@
     <string name="all_memo">모든 메모</string>
     <string name="setting">환경설정</string>
     <string name="trash">휴지통</string>
+    <string name="select_memo">메모 선택</string>
 </resources>

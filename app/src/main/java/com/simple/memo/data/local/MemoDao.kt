@@ -20,6 +20,9 @@ interface MemoDao {
     @Delete
     suspend fun deleteMemo(memo: MemoEntity)
 
+    @Query("SELECT * FROM memos WHERE id = :id")
+    suspend fun getMemoById(id: Int): MemoEntity?
+
     @Query("SELECT * FROM memos WHERE isDeleted = 0 ORDER BY date DESC")
     fun observeAllActiveMemos(): LiveData<List<MemoEntity>>
 

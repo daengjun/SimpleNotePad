@@ -1,14 +1,16 @@
-package com.simple.memo.ui.write
+package com.simple.memo.ui.widget
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.simple.memo.R
 import com.simple.memo.data.model.MemoEntity
 import com.simple.memo.databinding.FragmentWriteMemoBinding
 import com.simple.memo.util.TextSizeUtils.getTextSizeValue
@@ -17,7 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class WriteMemoFragment : Fragment() {
+class WidgetWriteMemoFragment : Fragment() {
 
     private var _binding: FragmentWriteMemoBinding? = null
     private val binding get() = _binding!!
@@ -25,7 +27,6 @@ class WriteMemoFragment : Fragment() {
     private lateinit var memoViewModel: MemoViewModel
 
     private var originalMemo: MemoEntity? = null
-    private var isDeletedFromButton = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,8 +35,9 @@ class WriteMemoFragment : Fragment() {
         _binding = FragmentWriteMemoBinding.inflate(inflater, container, false)
         memoViewModel = ViewModelProvider(this)[MemoViewModel::class.java]
 
+        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title).visibility =
+            View.INVISIBLE
 
-        Log.e("TAG", "onCreateView:  실행됨")
         val prefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
         val selectedSize = prefs.getString("key_text_size", "medium") ?: "medium"
         val textSizeValue = getTextSizeValue(selectedSize)
@@ -49,33 +51,15 @@ class WriteMemoFragment : Fragment() {
         return binding.root
     }
 
-
     override fun onPause() {
         super.onPause()
         val currentContent = binding.editTextMemo.text.toString().trim()
         val originalContent = originalMemo?.content?.trim()
         if (currentContent.isEmpty()) return
 
-        Log.e("TAG", "onPause:asdasd " )
-
-        if (isDeletedFromButton) {
-            Log.e("TAG", "onPause:asdasd 2" )
-
-            val updatedMemo = originalMemo!!.copy(
-                content = currentContent,
-                date = getCurrentFormattedDate(),
-                isDeleted = isDeletedFromButton
-            )
-            memoViewModel.updateMemo(updatedMemo)
-            return
-        }
-
         if (originalMemo == null) {
-            Log.e("TAG", "onPause:asdasd 3" )
             insertMemo(currentContent)
         } else if (currentContent != originalContent) {
-            Log.e("TAG", "onPause:asdasd 4" )
-
             val updatedMemo = originalMemo!!.copy(
                 content = currentContent,
                 date = getCurrentFormattedDate()
@@ -105,8 +89,8 @@ class WriteMemoFragment : Fragment() {
 
     companion object {
         private const val ARG_MEMO = "arg_memo"
-        fun newInstance(memo: MemoEntity): WriteMemoFragment {
-            val fragment = WriteMemoFragment()
+        fun newInstance(memo: MemoEntity): WidgetWriteMemoFragment {
+            val fragment = WidgetWriteMemoFragment()
             val bundle = Bundle()
             bundle.putSerializable(ARG_MEMO, memo)
             fragment.arguments = bundle
@@ -116,9 +100,5 @@ class WriteMemoFragment : Fragment() {
 
     fun getCurrentMemo(): MemoEntity? {
         return originalMemo
-    }
-
-    fun markAsDeleted() {
-        isDeletedFromButton = true
     }
 }

@@ -22,4 +22,5 @@
     <string name="all_memo">All Memos</string>
     <string name="setting">Settings</string>
     <string name="trash">Trash</string>
+    <string name="select_memo">Select memo</string>
 </resources>
