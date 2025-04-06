@@ -34,11 +34,9 @@
             android:exported="true">
 
             <intent-filter>
-                <!-- ✅ 시스템이 위젯 갱신 시 호출하는 기본 액션 -->
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
-            <!-- ✅ 위젯 크기/레이아웃 설정 정보 -->
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/simple_memo_widget_info" />
