@@ -19,7 +19,6 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:textStyle="bold" />
-
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.fragment.app.FragmentContainerView

@@ -9,6 +9,7 @@
         <item name="colorPrimary">#FE353333</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorOnSecondary">@color/white</item>
+        <item name="android:textColorHighlight">#99454343</item>
         <item name="floatingActionButtonStyle">@style/MyFABStyle</item>
     </style>
 
