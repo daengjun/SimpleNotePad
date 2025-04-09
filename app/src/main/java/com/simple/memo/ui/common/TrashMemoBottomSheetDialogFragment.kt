@@ -40,8 +40,14 @@ class TrashMemoBottomSheetDialogFragment(
         dialog.setOnShowListener {
             val bottomSheet = (dialog as BottomSheetDialog)
                 .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.setBackgroundColor(Color.TRANSPARENT) // ← 핵심!
+            bottomSheet?.setBackgroundColor(Color.TRANSPARENT)
         }
         return dialog
     }
+
+    /*
+     * Tablet 바텀 시트
+     * 가로 크기 꽉차게 설정
+     * */
+    override fun getTheme(): Int = R.style.CustomBottomSheetDialogTheme
 }

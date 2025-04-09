@@ -46,4 +46,10 @@ class MemoBottomSheetDialogFragment(
         }
         return dialog
     }
+
+    /*
+    * Tablet 바텀 시트
+    * 가로 크기 꽉차게 설정
+    * */
+    override fun getTheme(): Int = R.style.CustomBottomSheetDialogTheme
 }
