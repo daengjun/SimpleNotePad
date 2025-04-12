@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import androidx.core.content.edit
 
 class MemoViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -30,19 +31,9 @@ class MemoViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
-//    fun updateMemo(memo: MemoEntity) {
-//        GlobalScope.launch(Dispatchers.IO) {
-//            try {
-//                memoDao.updateMemo(memo)
-//                withContext(Dispatchers.Main) {
-//                    handleWidgetUpdateOrClear(memo)
-//                }
-//            } catch (e: Exception) {
-//                Log.e("TAG", "updateMemo exception: ${e.message}", e)
-//            }
-//        }
-//    }
+    fun getMemosByFolder(folderName: String): LiveData<List<MemoEntity>> {
+        return memoDao.observeMemosByFolder(folderName)
+    }
 
     fun updateMemo(memo: MemoEntity) {
         GlobalScope.launch(Dispatchers.IO) {
@@ -61,12 +52,13 @@ class MemoViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
-    fun searchMemos(keyword: String): LiveData<List<MemoEntity>> {
-        return memoDao.searchMemos(keyword)
+    fun searchMemosByFolder(folder: String?, keyword: String): LiveData<List<MemoEntity>> {
+        return if (folder == null) {
+            memoDao.searchMemos(keyword)
+        } else {
+            memoDao.searchMemosInFolder(folder, "%$keyword%")
+        }
     }
-
-
     /*
     * 휴지통 설정한 날짜에 따라서 메모 자동 삭제
     * */
@@ -107,23 +99,38 @@ class MemoViewModel(application: Application) : AndroidViewModel(application) {
                 if (memo.isDeleted) {
                     Log.e("TAG", "handleWidgetUpdateOrClear: 3")
 
-                    // ❌ 삭제된 메모 → 위젯 초기화
-                    prefs.edit()
-                        .remove("memo_id_$widgetId")
-                        .remove("memo_content_$widgetId")
-                        .apply()
+                    prefs.edit {
+                        remove("memo_id_$widgetId")
+                            .remove("memo_content_$widgetId")
+                    }
                 } else {
                     Log.e("TAG", "handleWidgetUpdateOrClear: 4")
-                    // 📝 수정된 메모 → 내용 업데이트
-                    prefs.edit()
-                        .putString("memo_content_$widgetId", memo.content)
-                        .apply()
+                    prefs.edit {
+                        putString("memo_content_$widgetId", memo.content)
+                    }
                 }
 
-                // 🔄 위젯 갱신
                 appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.lv_widget_memo)
                 SimpleMemoWidget.updateWidget(context, appWidgetManager, widgetId)
             }
+        }
+    }
+
+    fun deleteAllMemos() {
+        viewModelScope.launch {
+            memoDao.deleteAllMemos()
+        }
+    }
+
+    fun renameFolder(oldName: String, newName: String) {
+        viewModelScope.launch {
+            memoDao.updateFolderName(oldName, newName)
+        }
+    }
+
+    fun moveMemosToDefault(folderName: String) {
+        viewModelScope.launch {
+            memoDao.moveMemosToDefault(folderName)
         }
     }
 

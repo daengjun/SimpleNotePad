@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+
 class WriteMemoFragment : Fragment() {
 
     private var _binding: FragmentWriteMemoBinding? = null
@@ -26,6 +27,7 @@ class WriteMemoFragment : Fragment() {
 
     private var originalMemo: MemoEntity? = null
     private var isDeletedFromButton = false
+    private var currentFolderName: String = "기본"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,21 +36,24 @@ class WriteMemoFragment : Fragment() {
         _binding = FragmentWriteMemoBinding.inflate(inflater, container, false)
         memoViewModel = ViewModelProvider(this)[MemoViewModel::class.java]
 
-
-        Log.e("TAG", "onCreateView:  실행됨")
         val prefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
         val selectedSize = prefs.getString("key_text_size", "medium") ?: "medium"
         val textSizeValue = getTextSizeValue(selectedSize)
-
         binding.editTextMemo.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeValue)
+
         originalMemo = arguments?.getSerializable(ARG_MEMO) as? MemoEntity
 
+        if (originalMemo == null) {
+            currentFolderName = arguments?.getString(ARG_FOLDER_NAME) ?: "기본"
+        } else {
+            currentFolderName = originalMemo!!.folderName
+        }
         originalMemo?.let {
             binding.editTextMemo.setText(it.content)
         }
+
         return binding.root
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -56,26 +61,19 @@ class WriteMemoFragment : Fragment() {
         val originalContent = originalMemo?.content?.trim()
         if (currentContent.isEmpty()) return
 
-        Log.e("TAG", "onPause:asdasd " )
-
         if (isDeletedFromButton) {
-            Log.e("TAG", "onPause:asdasd 2" )
-
             val updatedMemo = originalMemo!!.copy(
                 content = currentContent,
                 date = getCurrentFormattedDate(),
-                isDeleted = isDeletedFromButton
+                isDeleted = true
             )
             memoViewModel.updateMemo(updatedMemo)
             return
         }
 
         if (originalMemo == null) {
-            Log.e("TAG", "onPause:asdasd 3" )
             insertMemo(currentContent)
         } else if (currentContent != originalContent) {
-            Log.e("TAG", "onPause:asdasd 4" )
-
             val updatedMemo = originalMemo!!.copy(
                 content = currentContent,
                 date = getCurrentFormattedDate()
@@ -88,7 +86,8 @@ class WriteMemoFragment : Fragment() {
         val memo = MemoEntity(
             content = content,
             date = getCurrentFormattedDate(),
-            isDeleted = false
+            isDeleted = false,
+            folderName = currentFolderName
         )
         memoViewModel.insertMemo(memo)
     }
@@ -105,10 +104,20 @@ class WriteMemoFragment : Fragment() {
 
     companion object {
         private const val ARG_MEMO = "arg_memo"
+        private const val ARG_FOLDER_NAME = "arg_folder_name"
+
         fun newInstance(memo: MemoEntity): WriteMemoFragment {
             val fragment = WriteMemoFragment()
             val bundle = Bundle()
             bundle.putSerializable(ARG_MEMO, memo)
+            fragment.arguments = bundle
+            return fragment
+        }
+
+        fun newInstance(folderName: String): WriteMemoFragment {
+            val fragment = WriteMemoFragment()
+            val bundle = Bundle()
+            bundle.putString(ARG_FOLDER_NAME, folderName)
             fragment.arguments = bundle
             return fragment
         }

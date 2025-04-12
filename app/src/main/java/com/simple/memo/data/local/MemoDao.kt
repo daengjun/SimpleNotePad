@@ -34,4 +34,20 @@ interface MemoDao {
 
     @Query("DELETE FROM memos WHERE isDeleted = 1 AND date < :thresholdDate")
     suspend fun deleteOldTrashMemos(thresholdDate: String)
+
+    @Query("SELECT * FROM memos WHERE isDeleted = 0 AND folderName = :folderName ORDER BY date DESC")
+    fun observeMemosByFolder(folderName: String): LiveData<List<MemoEntity>>
+
+    @Query("DELETE FROM memos")
+    suspend fun deleteAllMemos()
+
+    @Query("UPDATE memos SET folderName = :newName WHERE folderName = :oldName")
+    suspend fun updateFolderName(oldName: String, newName: String)
+
+    @Query("UPDATE memos SET folderName = '' WHERE folderName = :deletedFolder")
+    suspend fun moveMemosToDefault(deletedFolder: String)
+
+    @Query("SELECT * FROM memos WHERE isDeleted = 0 AND folderName = :folder AND content LIKE :keyword ORDER BY date DESC")
+    fun searchMemosInFolder(folder: String, keyword: String): LiveData<List<MemoEntity>>
+
 }

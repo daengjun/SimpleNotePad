@@ -9,5 +9,6 @@ data class MemoEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val content: String,
     val date: String,
-    val isDeleted: Boolean = false
+    val isDeleted: Boolean = false,
+    val folderName: String = "기본"
 ) : Serializable

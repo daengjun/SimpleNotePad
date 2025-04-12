@@ -1,9 +1,12 @@
 package com.simple.memo.ui.home
 
 import android.content.Context
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -22,10 +25,13 @@ class MemoAdapter(
         private val tvDate: TextView = itemView.findViewById(R.id.tv_date)
 
         fun bind(memo: MemoEntity) {
+            Log.e("TAG", "bind: ${memo.folderName}")
+
             tvContent.text = memo.content
             tvDate.text = memo.date
 
-            val prefs = itemView.context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+            val prefs =
+                itemView.context.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
             val sizePref = prefs.getString("key_text_size", "medium") ?: "medium"
             val textSize = when (sizePref) {
                 "small" -> 14f

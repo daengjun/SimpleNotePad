@@ -46,6 +46,7 @@ kapt {
 }
 
 dependencies {
+    implementation("androidx.recyclerview:recyclerview:1.3.1")
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)

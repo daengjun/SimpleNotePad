@@ -11,7 +11,6 @@ import com.simple.memo.databinding.FragmentTrashBinding
 import com.simple.memo.ui.common.TrashMemoBottomSheetDialogFragment
 import com.simple.memo.viewModel.MemoViewModel
 
-
 class TrashFragment : Fragment() {
 
     private var _binding: FragmentTrashBinding? = null

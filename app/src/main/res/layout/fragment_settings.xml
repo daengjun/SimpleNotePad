@@ -33,10 +33,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/small_size"
-                app:cornerRadius="0dp"
                 app:backgroundTint="@color/selector_toggle_background"
+                app:cornerRadius="0dp"
                 app:strokeColor="@color/selector_toggle_stroke"
-                app:strokeWidth="1dp"/>
+                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_medium"
@@ -45,10 +45,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/middle_size"
-                app:cornerRadius="0dp"
                 app:backgroundTint="@color/selector_toggle_background"
+                app:cornerRadius="0dp"
                 app:strokeColor="@color/selector_toggle_stroke"
-                app:strokeWidth="1dp"/>
+                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_large"
@@ -57,10 +57,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/big_size"
-                app:cornerRadius="0dp"
                 app:backgroundTint="@color/selector_toggle_background"
+                app:cornerRadius="0dp"
                 app:strokeColor="@color/selector_toggle_stroke"
-                app:strokeWidth="1dp"/>
+                app:strokeWidth="1dp" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <TextView
@@ -85,10 +85,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/none"
-                app:cornerRadius="0dp"
                 app:backgroundTint="@color/selector_toggle_background"
+                app:cornerRadius="0dp"
                 app:strokeColor="@color/selector_toggle_stroke"
-                app:strokeWidth="1dp"/>
+                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_7days"
@@ -97,10 +97,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/seven_day"
-                app:cornerRadius="0dp"
                 app:backgroundTint="@color/selector_toggle_background"
+                app:cornerRadius="0dp"
                 app:strokeColor="@color/selector_toggle_stroke"
-                app:strokeWidth="1dp"/>
+                app:strokeWidth="1dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_30days"
@@ -109,10 +109,48 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/thirty_day"
-                app:cornerRadius="0dp"
                 app:backgroundTint="@color/selector_toggle_background"
+                app:cornerRadius="0dp"
                 app:strokeColor="@color/selector_toggle_stroke"
-                app:strokeWidth="1dp"/>
+                app:strokeWidth="1dp" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="기타 설정"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/manage_folder"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="13dp"
+            android:paddingBottom="13dp"
+            android:text="@string/manage_folder"
+            app:backgroundTint="@color/selector_toggle_background"
+            app:cornerRadius="0dp"
+            app:strokeColor="@color/selector_toggle_stroke"
+            app:strokeWidth="1dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/memo_all_delete"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="13dp"
+            android:paddingBottom="13dp"
+            android:text="@string/memo_reset"
+            android:textColor="#FF0000"
+            app:backgroundTint="@color/selector_toggle_background"
+            app:cornerRadius="0dp"
+            app:strokeColor="@color/selector_toggle_stroke"
+            app:strokeWidth="1dp" />
+
+
     </LinearLayout>
 </ScrollView>

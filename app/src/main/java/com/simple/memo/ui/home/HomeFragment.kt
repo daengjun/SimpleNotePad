@@ -20,6 +20,7 @@ import com.simple.memo.ui.common.MemoBottomSheetDialogFragment
 import com.simple.memo.ui.write.WriteMemoFragment
 import com.simple.memo.viewModel.MemoViewModel
 
+
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -27,6 +28,7 @@ class HomeFragment : Fragment() {
     private var searchBarWatcher: TextWatcher? = null
     private lateinit var memoViewModel: MemoViewModel
     private lateinit var memoAdapter: MemoAdapter
+    private var currentFolderName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +37,9 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         memoViewModel = ViewModelProvider(this)[MemoViewModel::class.java]
 
+        // null = 전체
+        currentFolderName = arguments?.getString("folderName")
+
         val searchBar = requireActivity().findViewById<EditText>(R.id.search_bar)
 
         searchBarWatcher = object : TextWatcher {
@@ -42,19 +47,18 @@ class HomeFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val keyword = s.toString()
                 if (keyword.isBlank()) {
-                    memoViewModel.allMemos.observe(viewLifecycleOwner) {
-                        memoAdapter.submitList(it)
-                    }
+                    observeMemoList()
                 } else {
-                    memoViewModel.searchMemos(keyword).observe(viewLifecycleOwner) {
-                        memoAdapter.submitList(it)
-                    }
+
+                    memoViewModel.searchMemosByFolder(currentFolderName, keyword)
+                        .observe(viewLifecycleOwner) {
+                            memoAdapter.submitList(it)
+                        }
                 }
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
-
         searchBar.addTextChangedListener(searchBarWatcher)
 
         memoAdapter = MemoAdapter(
@@ -70,20 +74,26 @@ class HomeFragment : Fragment() {
                     .replace(R.id.nav_host_fragment, WriteMemoFragment.newInstance(clickedMemo))
                     .addToBackStack(null)
                     .commit()
-            }, onLongClickItemClick = { longClickedMemo ->
+            },
+            onLongClickItemClick = { longClickedMemo ->
                 val bottomSheet = MemoBottomSheetDialogFragment(
                     memo = longClickedMemo,
-                    onDeleteClick = { memoToDelete ->
-                        val updatedMemo = memoToDelete.copy(isDeleted = true)
+                    onDeleteClick = {
+                        val updatedMemo = it.copy(isDeleted = true)
                         memoViewModel.updateMemo(updatedMemo)
-                    }, onShare = { memoToShare ->
+                    },
+                    onShare = {
                         val shareIntent = Intent(Intent.ACTION_SEND).apply {
                             type = "text/plain"
                             putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share))
-                            putExtra(Intent.EXTRA_TEXT, memoToShare.content)
+                            putExtra(Intent.EXTRA_TEXT, it.content)
                         }
-                        startActivity(Intent.createChooser(shareIntent,
-                            getString(R.string.memo_share_app_select)))
+                        startActivity(
+                            Intent.createChooser(
+                                shareIntent,
+                                getString(R.string.memo_share_app_select)
+                            )
+                        )
                     }
                 )
                 bottomSheet.show(parentFragmentManager, bottomSheet.tag)
@@ -92,14 +102,17 @@ class HomeFragment : Fragment() {
 
         binding.recyclerMemo.adapter = memoAdapter
         binding.recyclerMemo.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerMemo.adapter = memoAdapter
 
-        memoViewModel.allMemos.observe(viewLifecycleOwner) { memos ->
-            memoAdapter.submitList(memos)
-        }
+        observeMemoList()
 
         binding.fabAdd.setOnClickListener {
             hideKeyboard()
+            val writeFragment = if (currentFolderName != null) {
+                WriteMemoFragment.newInstance(folderName = currentFolderName!!)
+            } else {
+                WriteMemoFragment()
+            }
+
             requireActivity().supportFragmentManager.beginTransaction()
                 .setCustomAnimations(
                     R.anim.fade_in,
@@ -107,11 +120,24 @@ class HomeFragment : Fragment() {
                     R.anim.fade_in,
                     R.anim.fade_out
                 )
-                .replace(R.id.nav_host_fragment, WriteMemoFragment())
+                .replace(R.id.nav_host_fragment, writeFragment)
                 .addToBackStack(null)
                 .commit()
         }
+
         return binding.root
+    }
+
+    private fun observeMemoList() {
+        if (currentFolderName == null) {
+            memoViewModel.allMemos.observe(viewLifecycleOwner) {
+                memoAdapter.submitList(it)
+            }
+        } else {
+            memoViewModel.getMemosByFolder(currentFolderName!!).observe(viewLifecycleOwner) {
+                memoAdapter.submitList(it)
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -127,6 +153,6 @@ class HomeFragment : Fragment() {
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
     }
-
-
 }
+
+
