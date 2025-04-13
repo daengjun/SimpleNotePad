@@ -4,7 +4,7 @@
     <string name="navigation_drawer_close">메뉴 닫기</string>
     <string name="write">글쓰기</string>
     <string name="share">메모 공유</string>
-    <string name="delete">메모 삭제</string>
+    <string name="delete_memo">메모 삭제</string>
     <string name="none">사용 안함</string>
     <string name="seven_day">7일마다</string>
     <string name="thirty_day">30일마다</string>
@@ -34,4 +34,14 @@
     <string name="dialog_delete_folder_message">해당 폴더를 삭제하시겠습니까?</string>
     <string name="input_search_keyword">검색어를 입력해주세요</string>
     <string name="add_folder">폴더 추가</string>
+    <string name="memo_delete_check">메모 삭제 확인</string>
+    <string name="delete_memo_confirmation">%1$d개의 메모를 삭제하시겠습니까?</string>
+    <string name="delete_memo_permanently_confirmation">%1$d개의 메모를 영구 삭제하시겠습니까?</string>
+    <string name="search">검색</string>
+    <string name="delete">삭제</string>
+    <string name="more_options">더보기</string>
+    <string name="error_folder_name_exists">이미 존재하는 폴더 이름입니다</string>
+    <string name="none_select_memo">선택된 메모가 없습니다</string>
+    <string name="no_folders_to_manage">관리할 폴더가 없습니다.</string>
+    <string name="all_memos_deleted">전체 메모 데이터 삭제 완료</string>
 </resources>

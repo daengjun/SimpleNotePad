@@ -1,23 +1,29 @@
 package com.simple.memo.ui.home
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.simple.memo.R
+import com.simple.memo.data.model.MemoEntity
 import com.simple.memo.databinding.FragmentHomeBinding
 import com.simple.memo.ui.common.MemoBottomSheetDialogFragment
 import com.simple.memo.ui.write.WriteMemoFragment
+import com.simple.memo.util.CustomToastMessage
 import com.simple.memo.viewModel.MemoViewModel
 
 
@@ -29,6 +35,7 @@ class HomeFragment : Fragment() {
     private lateinit var memoViewModel: MemoViewModel
     private lateinit var memoAdapter: MemoAdapter
     private var currentFolderName: String? = null
+    private var isMultiSelectMode = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +66,7 @@ class HomeFragment : Fragment() {
 
             override fun afterTextChanged(s: Editable?) {}
         }
+
         searchBar.addTextChangedListener(searchBarWatcher)
 
         memoAdapter = MemoAdapter(
@@ -106,25 +114,38 @@ class HomeFragment : Fragment() {
         observeMemoList()
 
         binding.fabAdd.setOnClickListener {
-            hideKeyboard()
-            val writeFragment = if (currentFolderName != null) {
-                WriteMemoFragment.newInstance(folderName = currentFolderName!!)
+
+            if (isMultiSelectMode) {
+                val selected = memoAdapter.getSelectedMemos()
+                if (selected.isNotEmpty()) {
+                    showDeleteConfirmDialog(selected)
+                } else {
+                    CustomToastMessage.createToast(
+                        requireContext(),
+                        getString(R.string.none_select_memo)
+                    )
+                        .show()
+                }
             } else {
-                WriteMemoFragment()
+                hideKeyboard()
+                val writeFragment = if (currentFolderName != null) {
+                    WriteMemoFragment.newInstance(folderName = currentFolderName!!)
+                } else {
+                    WriteMemoFragment()
+                }
+
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(
+                        R.anim.fade_in,
+                        R.anim.fade_out,
+                        R.anim.fade_in,
+                        R.anim.fade_out
+                    )
+                    .replace(R.id.nav_host_fragment, writeFragment)
+                    .addToBackStack(null)
+                    .commit()
             }
-
-            requireActivity().supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.fade_in,
-                    R.anim.fade_out,
-                    R.anim.fade_in,
-                    R.anim.fade_out
-                )
-                .replace(R.id.nav_host_fragment, writeFragment)
-                .addToBackStack(null)
-                .commit()
         }
-
         return binding.root
     }
 
@@ -153,6 +174,73 @@ class HomeFragment : Fragment() {
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireActivity().currentFocus?.windowToken, 0)
     }
+
+
+    fun startMultiSelectMode() {
+        if (isMultiSelectMode) return
+        isMultiSelectMode = true
+        memoAdapter.setMultiSelectMode(true)
+        binding.fabAdd.setImageResource(R.drawable.ic_delete)
+    }
+
+    fun exitMultiSelectMode() {
+        if (!isMultiSelectMode) return
+        isMultiSelectMode = false
+        memoAdapter.exitMultiSelectMode()
+        binding.fabAdd.setImageResource(R.drawable.ic_add_memo)
+    }
+
+    private fun showDeleteConfirmDialog(selectedMemos: List<MemoEntity>) {
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_multi_delete, null)
+        val contentText = dialogView.findViewById<TextView>(R.id.content_text)
+        val btnCancel = dialogView.findViewById<TextView>(R.id.btn_cancel)
+        val btnConfirm = dialogView.findViewById<TextView>(R.id.btn_confirm)
+        contentText.text = getString(R.string.delete_memo_confirmation, selectedMemos.size)
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        dialog.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                dialog.dismiss()
+                true
+            } else {
+                false
+            }
+        }
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnConfirm.setOnClickListener {
+            moveToTrash(selectedMemos)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+    }
+
+
+    private fun moveToTrash(selectedMemos: List<MemoEntity>) {
+        selectedMemos.forEach { memo ->
+            val trashedMemo = memo.copy(isDeleted = true)
+            memoViewModel.updateMemo(trashedMemo)
+        }
+        exitMultiSelectMode()
+    }
+
+    fun isMultiSelectMode(): Boolean = isMultiSelectMode
+
 }
 
 

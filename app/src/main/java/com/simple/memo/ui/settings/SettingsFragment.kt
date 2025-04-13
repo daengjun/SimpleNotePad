@@ -119,7 +119,7 @@ class SettingsFragment : Fragment() {
             viewModel.deleteAllMemos()
             CustomToastMessage.createToast(
                 requireContext(),
-                "전체 메모 데이터 삭제 완료"
+                getString(R.string.all_memos_deleted)
             )
                 .show()
             dialog.dismiss()
@@ -141,7 +141,8 @@ class SettingsFragment : Fragment() {
             prefs.getStringSet("folder_list", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
 
         if (folderSet.isEmpty()) {
-            CustomToastMessage.createToast(requireContext(), "관리할 폴더가 없습니다.").show()
+            CustomToastMessage.createToast(requireContext(),
+                getString(R.string.no_folders_to_manage)).show()
             return
         }
 

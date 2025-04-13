@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/select_memo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:drawableStart="@drawable/ic_check"
+    android:drawablePadding="13dp"
+    android:foreground="?attr/selectableItemBackground"
+    android:minWidth="180dp"
+    android:paddingStart="20dp"
+    android:paddingTop="16dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="16dp"
+    android:text="@string/select_memo"
+    android:textColor="@android:color/black"
+    android:textSize="16sp" />

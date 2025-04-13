@@ -59,12 +59,12 @@ class MemoViewModel(application: Application) : AndroidViewModel(application) {
             memoDao.searchMemosInFolder(folder, "%$keyword%")
         }
     }
+
     /*
     * 휴지통 설정한 날짜에 따라서 메모 자동 삭제
     * */
     fun autoDeleteOldTrash(cycle: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.e("TAG", "autoDeleteOldTrash : $cycle")
             if (cycle == "never") return@launch
 
             val sdf = SimpleDateFormat("yyyy/MM/dd h:mm:ss a", Locale.getDefault())
@@ -133,5 +133,4 @@ class MemoViewModel(application: Application) : AndroidViewModel(application) {
             memoDao.moveMemosToDefault(folderName)
         }
     }
-
 }

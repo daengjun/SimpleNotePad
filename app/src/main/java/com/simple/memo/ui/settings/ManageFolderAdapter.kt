@@ -88,7 +88,7 @@ class ManageFolderAdapter(
 
                     folderSet.contains(newName) -> {
                         hideKeyboard(folderEditText)
-                        folderEditText.error = "이미 존재하는 폴더 이름"
+                        folderEditText.error = context.getString(R.string.error_folder_name_exists)
                     }
 
                     else -> {

@@ -1,32 +1,49 @@
 package com.simple.memo.ui.home
 
 import android.content.Context
-import android.util.Log
+import android.graphics.Color
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.simple.memo.data.model.MemoEntity
 import com.simple.memo.R
+import androidx.core.graphics.toColorInt
+
 
 class MemoAdapter(
     private val onItemClick: (MemoEntity) -> Unit,
     private val onLongClickItemClick: (MemoEntity) -> Unit
 ) : ListAdapter<MemoEntity, MemoAdapter.MemoViewHolder>(MemoDiffCallback()) {
 
+    private var isMultiSelectMode = false
+    private val selectedMemos = mutableSetOf<MemoEntity>()
+
+    fun setMultiSelectMode(enabled: Boolean) {
+        isMultiSelectMode = enabled
+        selectedMemos.clear()
+        notifyDataSetChanged()
+    }
+
+    fun getSelectedMemos(): List<MemoEntity> = selectedMemos.toList()
+
+    fun exitMultiSelectMode() {
+        isMultiSelectMode = false
+        selectedMemos.clear()
+        notifyDataSetChanged()
+    }
+
     inner class MemoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val LinearLayoutManager: LinearLayout = itemView.findViewById(R.id.containerLayout)
         private val tvContent: TextView = itemView.findViewById(R.id.tv_content)
         private val tvDate: TextView = itemView.findViewById(R.id.tv_date)
 
         fun bind(memo: MemoEntity) {
-            Log.e("TAG", "bind: ${memo.folderName}")
-
             tvContent.text = memo.content
             tvDate.text = memo.date
 
@@ -43,13 +60,36 @@ class MemoAdapter(
             tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize)
             tvDate.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize)
 
+            val isSelected = selectedMemos.any { it.id == memo.id }
+
+            LinearLayoutManager.setBackgroundColor(
+                if (isSelected) {
+                    "#7EB1AFAF".toColorInt()
+                } else {
+                    Color.WHITE
+                }
+            )
+
             itemView.setOnClickListener {
-                onItemClick(memo)
+                if (isMultiSelectMode) {
+                    toggleSelection(memo)
+                    notifyItemChanged(adapterPosition)
+                } else {
+                    onItemClick(memo)
+                }
             }
 
             itemView.setOnLongClickListener {
                 onLongClickItemClick(memo)
                 true
+            }
+        }
+
+        private fun toggleSelection(memo: MemoEntity) {
+            if (selectedMemos.contains(memo)) {
+                selectedMemos.remove(memo)
+            } else {
+                selectedMemos.add(memo)
             }
         }
     }

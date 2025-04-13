@@ -17,7 +17,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.PopupMenu
+import android.widget.PopupWindow
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -178,6 +181,13 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
+        val moreItem = menu.findItem(R.id.action_more)
+        moreItem.setOnMenuItemClickListener {
+            showPopupMenu(findViewById(R.id.action_more))
+            true
+        }
+
         return true
     }
 
@@ -185,6 +195,9 @@ class MainActivity : AppCompatActivity() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
 
         val isHomeScreen = currentFragment is HomeFragment
+
+        val isHomeAndTrashScreen =
+            currentFragment is HomeFragment || currentFragment is TrashFragment
         val isWriteScreen = currentFragment is WriteMemoFragment
         val isExistingMemo = if (isWriteScreen) {
             (currentFragment as WriteMemoFragment).getCurrentMemo() != null
@@ -192,6 +205,7 @@ class MainActivity : AppCompatActivity() {
             false
         }
 
+        menu.findItem(R.id.action_more)?.isVisible = isHomeAndTrashScreen
         menu.findItem(R.id.action_search)?.isVisible = isHomeScreen
         menu.findItem(R.id.action_delete)?.isVisible = isWriteScreen && isExistingMemo
 
@@ -237,6 +251,14 @@ class MainActivity : AppCompatActivity() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
         val isWriteScreen = currentFragment is WriteMemoFragment
         val isBackStackEmpty = supportFragmentManager.backStackEntryCount == 0
+
+        if (currentFragment is HomeFragment && currentFragment.isMultiSelectMode()) {
+            currentFragment.exitMultiSelectMode()
+            return
+        } else if (currentFragment is TrashFragment && currentFragment.isMultiSelectMode()) {
+            currentFragment.exitMultiSelectMode()
+            return
+        }
 
         if (!isWriteScreen && isBackStackEmpty) {
             val isVisible = binding.searchBar.isVisible
@@ -435,7 +457,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 folderSet.contains(folderName) -> {
-                    etFolderName.error = "이미 존재하는 폴더 이름"
+                    etFolderName.error = getString(R.string.error_folder_name_exists)
                 }
 
                 else -> {
@@ -516,4 +538,31 @@ class MainActivity : AppCompatActivity() {
             addFolderMenu(folderName)
         }
     }
+
+
+    private fun showPopupMenu(anchor: View) {
+        val popup = PopupMenu(this, anchor)
+        val customView = layoutInflater.inflate(R.layout.popup_menu_item, null)
+        val popupWindow = PopupWindow(
+            customView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        popupWindow.elevation = 8f
+        popupWindow.showAsDropDown(anchor)
+
+        val memoSelectView = customView.findViewById<TextView>(R.id.select_memo)
+        memoSelectView.setOnClickListener {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+            if (currentFragment is HomeFragment) {
+                currentFragment.startMultiSelectMode()
+            } else if (currentFragment is TrashFragment) {
+                currentFragment.startMultiSelectMode()
+            }
+            popupWindow.dismiss()
+        }
+        popup.show()
+    }
+
 }

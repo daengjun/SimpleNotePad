@@ -12,7 +12,7 @@
         android:layout_marginBottom="16dp"
         android:background="#FE353333"
         android:gravity="start|center_vertical"
-        android:paddingStart="10dp"
+        android:paddingStart="15dp"
         android:text="@string/delete_folder"
         android:textColor="@android:color/white"
         android:textSize="18sp"

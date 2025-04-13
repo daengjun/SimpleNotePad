@@ -4,14 +4,20 @@
 
     <item
         android:id="@+id/action_search"
-        android:title="검색"
         android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/search"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_delete"
-        android:title="삭제"
         android:icon="@android:drawable/ic_menu_delete"
-        app:showAsAction="ifRoom"
-        android:visible="false" />
+        android:title="@string/delete"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_more"
+        android:icon="@drawable/ic_more"
+        android:title="@string/more_options"
+        app:showAsAction="ifRoom" />
 </menu>

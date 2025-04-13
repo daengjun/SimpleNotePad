@@ -4,7 +4,7 @@
     <string name="navigation_drawer_close">Close menu</string>
     <string name="write">Write</string>
     <string name="share">Share memo</string>
-    <string name="delete">Delete memo</string>
+    <string name="delete_memo">Delete memo</string>
     <string name="none">None</string>
     <string name="seven_day">7 days</string>
     <string name="thirty_day">30 days</string>
@@ -34,4 +34,14 @@
     <string name="dialog_delete_folder_message">Are you sure you want to delete this folder?</string>
     <string name="input_search_keyword">Please enter a search term</string>
     <string name="add_folder">Add Folder</string>
+    <string name="memo_delete_check">Confirm Delete Memo</string>
+    <string name="delete_memo_confirmation">Are you sure you want to delete %1$d memos?</string>
+    <string name="delete_memo_permanently_confirmation">Are you sure you want to permanently delete %1$d memos?</string>
+    <string name="search">Search</string>
+    <string name="delete">Delete</string>
+    <string name="more_options">More</string>
+    <string name="error_folder_name_exists">Folder name already exists</string>
+    <string name="none_select_memo">No memo selected</string>
+    <string name="no_folders_to_manage">There are no folders to manage.</string>
+    <string name="all_memos_deleted">All memo data has been deleted</string>
 </resources>

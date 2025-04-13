@@ -36,7 +36,7 @@
             android:foreground="?attr/selectableItemBackground"
             android:gravity="center"
             android:paddingVertical="15dp"
-            android:text="@string/delete"
+            android:text="@string/delete_memo"
             android:textColor="#E20F0F"
             android:textSize="17sp" />
     </LinearLayout>
