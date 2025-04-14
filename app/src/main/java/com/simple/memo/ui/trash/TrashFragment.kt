@@ -153,6 +153,7 @@ class TrashFragment : Fragment() {
         btnConfirm.setOnClickListener {
             selectedMemos.forEach { memoViewModel.deleteMemo(it) }
             exitMultiSelectMode()
+            dialog.dismiss()
         }
 
         dialog.show()
