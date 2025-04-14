@@ -67,12 +67,16 @@ class ManageFolderAdapter(
                 dialog.dismiss()
             }
 
-
-            btnConfirm.setOnClickListener {
+            btnConfirm.setOnClickListener confirmClick@{
                 val newName = folderEditText.text.toString().trim()
-
                 val prefs = context.getSharedPreferences("folder_prefs", Context.MODE_PRIVATE)
                 val folderSet = prefs.getStringSet("folder_list", emptySet()) ?: emptySet()
+
+                val currentPosition = holder.bindingAdapterPosition
+                if (currentPosition == RecyclerView.NO_POSITION || currentPosition >= folders.size) {
+                    dialog.dismiss()
+                    return@confirmClick
+                }
 
                 when {
                     newName.isEmpty() -> {
@@ -81,7 +85,6 @@ class ManageFolderAdapter(
                     }
 
                     newName == folderName -> {
-                        // 변경 없음
                         hideKeyboard(folderEditText)
                         dialog.dismiss()
                     }
@@ -93,13 +96,14 @@ class ManageFolderAdapter(
 
                     else -> {
                         onRename(folderName, newName)
-                        folders[position] = newName
-                        notifyItemChanged(position)
+                        folders[currentPosition] = newName
+                        notifyItemChanged(currentPosition)
                         hideKeyboard(folderEditText)
                         dialog.dismiss()
                     }
                 }
             }
+
             dialog.show()
 
             dialog.window?.setLayout(

@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Html
 import android.text.InputType
 import android.util.Log
 import android.view.Gravity
