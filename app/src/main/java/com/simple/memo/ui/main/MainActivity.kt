@@ -2,12 +2,8 @@ package com.simple.memo.ui.main
 
 import android.animation.ValueAnimator
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
-import android.text.Html
-import android.text.InputType
 import android.util.Log
-import android.view.Gravity
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -21,7 +17,6 @@ import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity

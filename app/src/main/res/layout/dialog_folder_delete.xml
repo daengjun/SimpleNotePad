@@ -18,16 +18,17 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/et_folder_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:inputType="text"
-            android:padding="12dp"
-            android:text="@string/dialog_delete_folder_message"
-            android:textSize="17sp" />
+    <TextView
+        android:id="@+id/et_folder_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:paddingStart="15dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="12dp"
+        android:text="@string/dialog_delete_folder_message"
+        android:textSize="17sp" />
 
     <LinearLayout
         android:layout_width="match_parent"

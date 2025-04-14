@@ -22,9 +22,10 @@
         android:id="@+id/et_folder_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:padding="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="15dp"
         android:text="@string/remove_all_memo"
         android:textSize="17sp" />
 
