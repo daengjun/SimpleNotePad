@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -81,7 +82,6 @@ class TrashFragment : Fragment() {
                 }
             }
         }
-
         return binding.root
     }
 
@@ -102,6 +102,13 @@ class TrashFragment : Fragment() {
                 .setDuration(200)
                 .start()
         }
+
+        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
+            .animate()
+            .alpha(1f)
+            .setDuration(200)
+            .start()
+
     }
 
     fun exitMultiSelectMode() {
@@ -116,11 +123,18 @@ class TrashFragment : Fragment() {
                 binding.fabAdd.visibility = View.GONE
             }
             .start()
+
+        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
+            .animate()
+            .alpha(0f)
+            .setDuration(200)
+            .start()
+
     }
 
     fun isMultiSelectMode(): Boolean = isMultiSelectMode
 
-    fun getSelectedTrashMemos(): List<MemoEntity> = trashMemoAdapter.getSelectedMemos()
+    private fun getSelectedTrashMemos(): List<MemoEntity> = trashMemoAdapter.getSelectedMemos()
 
     private fun showDeleteConfirmDialog(selectedMemos: List<MemoEntity>) {
 

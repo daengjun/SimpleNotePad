@@ -44,4 +44,5 @@
     <string name="none_select_memo">선택된 메모가 없습니다</string>
     <string name="no_folders_to_manage">관리할 폴더가 없습니다.</string>
     <string name="all_memos_deleted">전체 메모 데이터 삭제 완료</string>
+    <string name="settings_etc">기타 설정</string>
 </resources>

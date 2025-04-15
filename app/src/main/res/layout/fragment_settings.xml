@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
-            android:text="기타 설정"
+            android:text="@string/settings_etc"
             android:textColor="@color/black"
             android:textSize="16sp" />
 

@@ -2,7 +2,9 @@ package com.simple.memo.ui.main
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -465,8 +467,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
         dialog.show()
+
+        dialogView.isFocusableInTouchMode = true
+        dialogView.isFocusable = true
+        dialogView.isClickable = true
+
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
     }
 
     private fun addFolderMenu(name: String) {
@@ -512,7 +522,7 @@ class MainActivity : AppCompatActivity() {
         folderContainer.addView(folderView)
     }
 
-    private fun saveFolderToPrefs(folderName: String) {
+    fun saveFolderToPrefs(folderName: String) {
         val prefs = getSharedPreferences("folder_prefs", Context.MODE_PRIVATE)
         val folderSet =
             prefs.getStringSet("folder_list", mutableSetOf())?.toMutableSet() ?: mutableSetOf()

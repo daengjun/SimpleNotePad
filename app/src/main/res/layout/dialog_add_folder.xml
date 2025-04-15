@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -27,8 +28,11 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/bg_edittext_folder"
+        android:gravity="top|start"
         android:hint="@string/input_folder_name"
-        android:inputType="text"
+        android:inputType="textMultiLine"
+        android:maxLines="2"
+        android:minLines="2"
         android:padding="12dp" />
 
     <LinearLayout

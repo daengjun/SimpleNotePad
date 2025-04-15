@@ -39,7 +39,7 @@ class MemoAdapter(
     }
 
     inner class MemoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val LinearLayoutManager: LinearLayout = itemView.findViewById(R.id.containerLayout)
+        private val containerLayout: LinearLayout = itemView.findViewById(R.id.containerLayout)
         private val tvContent: TextView = itemView.findViewById(R.id.tv_content)
         private val tvDate: TextView = itemView.findViewById(R.id.tv_date)
 
@@ -62,7 +62,7 @@ class MemoAdapter(
 
             val isSelected = selectedMemos.any { it.id == memo.id }
 
-            LinearLayoutManager.setBackgroundColor(
+            containerLayout.setBackgroundColor(
                 if (isSelected) {
                     "#7EB1AFAF".toColorInt()
                 } else {

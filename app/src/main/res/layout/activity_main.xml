@@ -21,7 +21,21 @@
             android:elevation="10dp"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <TextView
+                android:id="@+id/tv_toolbar_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alpha="0"
+                android:drawableStart="@drawable/ic_check_white"
+                android:drawablePadding="13dp"
+                android:text="@string/select_memo"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </androidx.appcompat.widget.Toolbar>
 
         <EditText
             android:id="@+id/search_bar"

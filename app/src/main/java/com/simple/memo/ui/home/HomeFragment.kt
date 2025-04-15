@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -181,6 +182,12 @@ class HomeFragment : Fragment() {
         isMultiSelectMode = true
         memoAdapter.setMultiSelectMode(true)
         binding.fabAdd.setImageResource(R.drawable.ic_delete)
+
+        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
+            .animate()
+            .alpha(1f)
+            .setDuration(200)
+            .start()
     }
 
     fun exitMultiSelectMode() {
@@ -188,6 +195,12 @@ class HomeFragment : Fragment() {
         isMultiSelectMode = false
         memoAdapter.exitMultiSelectMode()
         binding.fabAdd.setImageResource(R.drawable.ic_add_memo)
+
+        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
+            .animate()
+            .alpha(0f)
+            .setDuration(200)
+            .start()
     }
 
     private fun showDeleteConfirmDialog(selectedMemos: List<MemoEntity>) {

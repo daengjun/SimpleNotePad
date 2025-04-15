@@ -141,8 +141,10 @@ class SettingsFragment : Fragment() {
             prefs.getStringSet("folder_list", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
 
         if (folderSet.isEmpty()) {
-            CustomToastMessage.createToast(requireContext(),
-                getString(R.string.no_folders_to_manage)).show()
+            CustomToastMessage.createToast(
+                requireContext(),
+                getString(R.string.no_folders_to_manage)
+            ).show()
             return
         }
 

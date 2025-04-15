@@ -44,4 +44,5 @@
     <string name="none_select_memo">No memo selected</string>
     <string name="no_folders_to_manage">There are no folders to manage.</string>
     <string name="all_memos_deleted">All memo data has been deleted</string>
+    <string name="settings_etc">Other Settings</string>
 </resources>
