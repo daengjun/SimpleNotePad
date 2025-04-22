@@ -79,6 +79,8 @@ class MainActivity : AppCompatActivity() {
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
+
+        binding.drawerLayout.setScrimColor(Color.TRANSPARENT)
         binding.drawerLayout.addDrawerListener(toggle)
 
         if (savedInstanceState == null) {

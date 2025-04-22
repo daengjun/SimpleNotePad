@@ -3,15 +3,9 @@
     <!-- 선택된 상태 -->
     <item android:state_selected="true">
         <shape android:shape="rectangle">
-            <solid android:color="#E0E0E0" /> <!-- 선택된 배경색 -->
+            <solid android:color="#E0E0E0" />
         </shape>
     </item>
-    <!-- 눌렀을 때 (클릭 피드백) -->
-<!--    <item android:state_pressed="true">-->
-<!--        <shape android:shape="rectangle">-->
-<!--            <solid android:color="#F0F0F0" />-->
-<!--        </shape>-->
-<!--    </item>-->
     <!-- 기본 상태 -->
     <item>
         <shape android:shape="rectangle">
