@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:alpha="0"
                 android:drawableStart="@drawable/ic_check_white"
-                android:drawablePadding="13dp"
+                android:drawablePadding="10dp"
                 android:text="@string/select_memo"
                 android:textColor="@color/white"
                 android:textSize="20sp"

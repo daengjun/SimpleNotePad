@@ -1,5 +1,6 @@
 package com.simple.memo.ui.main
 
+import android.animation.LayoutTransition
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
@@ -13,6 +14,7 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -47,6 +49,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var toggle: ActionBarDrawerToggle
     private lateinit var selectedMenu: View
+
+    var isFolderExpanded = true
+
+    private val prefs by lazy {
+        this.getSharedPreferences("drawer_prefs", Context.MODE_PRIVATE)
+    }
+
+    private val PREF_KEY_FOLDER_EXPANDED = "folder_expanded"
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -263,6 +274,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (!isWriteScreen && isBackStackEmpty) {
+
+            val isDrawerOpen = binding.drawerLayout.isDrawerOpen(GravityCompat.START)
+            Log.e("TAG", "isDrawerOpen : $isDrawerOpen")
+
+            /*
+             * 서랖 메뉴 닫기
+             * */
+            if (isDrawerOpen) {
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
+                return
+            }
+
             val isVisible = binding.searchBar.isVisible
 
             if (isVisible) {
@@ -348,10 +371,33 @@ class MainActivity : AppCompatActivity() {
         val menuSettings = findViewById<View>(R.id.menu_settings)
         val menuTrash = findViewById<View>(R.id.menu_trash)
         val menuAddFolder = findViewById<View>(R.id.menu_add_folder)
-
+        val myFolders = findViewById<LinearLayout>(R.id.menu_my_folders)
+        val folderContainer = findViewById<LinearLayout>(R.id.folder_container)
+        val toggleIcon = findViewById<ImageView>(R.id.folder_toggle_icon)
         loadFoldersFromPrefs().forEach { folderName ->
             addFolderMenu(folderName)
         }
+
+
+        (folderContainer.parent as ViewGroup).layoutTransition =
+            LayoutTransition().apply {
+                enableTransitionType(LayoutTransition.CHANGING)
+            }
+
+
+        myFolders.setOnClickListener {
+            rotateArrow(toggleIcon, isFolderExpanded)
+
+            if (isFolderExpanded) {
+                folderContainer.visibility = View.GONE
+            } else {
+                folderContainer.visibility = View.VISIBLE
+            }
+            isFolderExpanded = !isFolderExpanded
+            saveFolderExpandedState(isFolderExpanded)
+
+        }
+
 
         menuHome.setOnClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
@@ -364,7 +410,6 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (!isSameFolder) {
-
                 animateSearchBar(false)
                 binding.searchBar.setText("")
 
@@ -372,6 +417,7 @@ class MainActivity : AppCompatActivity() {
                     .replace(R.id.nav_host_fragment, HomeFragment())
                     .commit()
                 invalidateOptionsMenu()
+                binding.tvToolbarTitle.alpha = 0f
             }
 
             updateSelectedMenu(menuHome)
@@ -388,6 +434,7 @@ class MainActivity : AppCompatActivity() {
                     .commit()
                 invalidateOptionsMenu()
                 hideKeyboard()
+                binding.tvToolbarTitle.alpha = 0f
             }
             updateSelectedMenu(menuSettings)
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -403,6 +450,7 @@ class MainActivity : AppCompatActivity() {
                     .commit()
                 invalidateOptionsMenu()
                 hideKeyboard()
+                binding.tvToolbarTitle.alpha = 0f
             }
             updateSelectedMenu(menuTrash)
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -412,6 +460,8 @@ class MainActivity : AppCompatActivity() {
             hideKeyboard()
             showFolderInputDialog()
         }
+
+        restoreFolderExpandedState()
 
         // 앱 시작 시 기본 선택 메뉴 설정
         selectedMenu = menuHome
@@ -598,5 +648,36 @@ class MainActivity : AppCompatActivity() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
+
+    private fun rotateArrow(view: View, expanded: Boolean) {
+        val to = if (expanded) -90f else 0f
+
+        view.animate()
+            .rotation(to)
+            .setDuration(260)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .start()
+    }
+
+    private fun restoreFolderExpandedState() {
+        isFolderExpanded = prefs.getBoolean(PREF_KEY_FOLDER_EXPANDED, true)
+        Log.e("TAG", "isFolderExpanded: $isFolderExpanded")
+
+        val folderContainer = findViewById<LinearLayout>(R.id.folder_container)
+        val toggleIcon = findViewById<ImageView>(R.id.folder_toggle_icon)
+
+        if (isFolderExpanded) {
+            folderContainer.visibility = View.VISIBLE
+            toggleIcon.rotation = 0f
+        } else {
+            toggleIcon.rotation = -90f
+            folderContainer.visibility = View.GONE
+        }
+    }
+
+    private fun saveFolderExpandedState(expanded: Boolean) {
+        prefs.edit { putBoolean(PREF_KEY_FOLDER_EXPANDED, expanded) }
+    }
+
 
 }
