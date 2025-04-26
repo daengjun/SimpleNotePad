@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.simple.memo.data.model.MemoEntity
@@ -42,13 +43,23 @@ class MemoBottomSheetDialogFragment(
         dialog.setOnShowListener {
             val bottomSheet = (dialog as BottomSheetDialog)
                 .findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.setBackgroundColor(Color.TRANSPARENT)
+            bottomSheet?.let {
+                val behavior = BottomSheetBehavior.from(it)
+
+                /*
+                * 태블릿 대응 코드
+                * */
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                behavior.skipCollapsed = true
+
+                it.setBackgroundColor(Color.TRANSPARENT)
+            }
         }
         return dialog
     }
 
     /*
-    * Tablet 바텀 시트
+    * 태블릿 바텀 시트
     * 가로 크기 꽉차게 설정
     * */
     override fun getTheme(): Int = R.style.CustomBottomSheetDialogTheme
