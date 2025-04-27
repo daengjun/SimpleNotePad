@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.simple.memo.R
+import kotlin.math.min
 
 class ManageFolderAdapter(
     private val folders: MutableList<String>,
@@ -109,10 +110,23 @@ class ManageFolderAdapter(
 
             dialog.show()
 
-            dialog.window?.setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+//            dialog.window?.setLayout(
+//                ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT
+//            )
+
+            dialog.window?.let { window ->
+                val params = window.attributes
+                val screenWidth = holder.itemView.context.resources.displayMetrics.widthPixels
+                val dialogWidth = (screenWidth * 1.0f).toInt() // 100퍼
+                val maxDialogWidth = holder.itemView.context.resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+
+                params.width = min(dialogWidth, maxDialogWidth)
+                params.height = ViewGroup.LayoutParams.WRAP_CONTENT
+
+                window.attributes = params
+            }
+
         }
 
         holder.deleteBtn.setOnClickListener {
@@ -156,10 +170,22 @@ class ManageFolderAdapter(
 
             dialog.show()
 
-            dialog.window?.setLayout(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+//            dialog.window?.setLayout(
+//                ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT
+//            )
+
+            dialog.window?.let { window ->
+                val params = window.attributes
+                val screenWidth = holder.itemView.context.resources.displayMetrics.widthPixels
+                val dialogWidth = (screenWidth * 1.0f).toInt() // 100퍼
+                val maxDialogWidth = holder.itemView.context.resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+
+                params.width = min(dialogWidth, maxDialogWidth)
+                params.height = ViewGroup.LayoutParams.WRAP_CONTENT
+
+                window.attributes = params
+            }
         }
     }
 

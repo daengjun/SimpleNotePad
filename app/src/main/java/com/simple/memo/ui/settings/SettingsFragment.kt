@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.simple.memo.ui.main.MainActivity
 import com.simple.memo.util.CustomToastMessage
 import com.simple.memo.viewModel.MemoViewModel
+import kotlin.math.min
 
 class SettingsFragment : Fragment() {
 
@@ -127,8 +128,19 @@ class SettingsFragment : Fragment() {
 
         dialog.show()
 
+//        dialog.window?.setLayout(
+//            ViewGroup.LayoutParams.MATCH_PARENT,
+//            ViewGroup.LayoutParams.WRAP_CONTENT
+//        )
+
+        /*
+        * 태블릿 최대 크기 지정 600dp
+        * */
+        val dialogWidth = resources.displayMetrics.widthPixels
+        val maxDialogWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+
         dialog.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
+            min(dialogWidth, maxDialogWidth),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
@@ -189,11 +201,19 @@ class SettingsFragment : Fragment() {
 
         dialog.show()
 
+//        dialog.window?.setLayout(
+//            ViewGroup.LayoutParams.MATCH_PARENT,
+//            ViewGroup.LayoutParams.WRAP_CONTENT
+//        )
+
         /*
-        * 가로 꽉차게 설정 (필수)
+        * 태블릿 최대 크기 지정 600dp
         * */
+        val dialogWidth = resources.displayMetrics.widthPixels
+        val maxDialogWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+
         dialog.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
+            min(dialogWidth, maxDialogWidth),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }

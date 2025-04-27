@@ -26,6 +26,7 @@ import com.simple.memo.ui.common.MemoBottomSheetDialogFragment
 import com.simple.memo.ui.write.WriteMemoFragment
 import com.simple.memo.util.CustomToastMessage
 import com.simple.memo.viewModel.MemoViewModel
+import kotlin.math.min
 
 
 class HomeFragment : Fragment() {
@@ -236,8 +237,19 @@ class HomeFragment : Fragment() {
 
         dialog.show()
 
+//        dialog.window?.setLayout(
+//            ViewGroup.LayoutParams.MATCH_PARENT,
+//            ViewGroup.LayoutParams.WRAP_CONTENT
+//        )
+
+        /*
+        * 태블릿 최대 크기 지정 600dp
+        * */
+        val dialogWidth = resources.displayMetrics.widthPixels
+        val maxDialogWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+
         dialog.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
+            min(dialogWidth, maxDialogWidth),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 

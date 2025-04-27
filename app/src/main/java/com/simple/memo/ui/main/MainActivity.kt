@@ -42,6 +42,7 @@ import com.simple.memo.data.local.MemoDatabase
 import com.simple.memo.viewModel.MemoViewModel
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
+import kotlin.math.min
 
 
 class MainActivity : AppCompatActivity() {
@@ -329,8 +330,19 @@ class MainActivity : AppCompatActivity() {
 
         dialog.show()
 
+//        dialog.window?.setLayout(
+//            ViewGroup.LayoutParams.MATCH_PARENT,
+//            ViewGroup.LayoutParams.WRAP_CONTENT
+//        )
+
+        /*
+        * 태블릿 최대 크기 지정 600dp
+        * */
+        val dialogWidth = resources.displayMetrics.widthPixels
+        val maxDialogWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+
         dialog.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
+            min(dialogWidth, maxDialogWidth),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
@@ -527,6 +539,17 @@ class MainActivity : AppCompatActivity() {
 
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        /*
+        * 태블릿 최대 크기 지정 600dp
+        * */
+        val dialogWidth = resources.displayMetrics.widthPixels
+        val maxDialogWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+
+        dialog.window?.setLayout(
+            min(dialogWidth, maxDialogWidth),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
