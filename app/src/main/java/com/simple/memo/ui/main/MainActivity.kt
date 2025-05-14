@@ -1,11 +1,9 @@
 package com.simple.memo.ui.main
 
-import android.animation.LayoutTransition
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -42,23 +40,34 @@ import com.simple.memo.data.local.MemoDatabase
 import com.simple.memo.viewModel.MemoViewModel
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.simple.memo.ui.settings.ManageFoldersFragment
+import com.simple.memo.util.CustomToastMessage
+import org.json.JSONArray
 import kotlin.math.min
 
+
+/*
+* TODO
+*  1.메모 비었을때 화면에 알림 표시 (신규메모작성유도?) , 휴지통도 마찬가지
+*  3.인앱 업데이트 구현
+*  4.평점 페이지로 이동 시키기
+*  4.스토어 업데이트
+* */
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var toggle: ActionBarDrawerToggle
-    private lateinit var selectedMenu: View
-
-    var isFolderExpanded = true
+    private var selectedMenu: View? = null
+    private var isFolderExpanded = true
+    private lateinit var folderAdapter: FolderAdapter
 
     private val prefs by lazy {
         this.getSharedPreferences("drawer_prefs", Context.MODE_PRIVATE)
     }
 
-    private val PREF_KEY_FOLDER_EXPANDED = "folder_expanded"
-
+    private val preferenceKeyFolderExpanded = "folder_expanded"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -164,6 +173,35 @@ class MainActivity : AppCompatActivity() {
             }
         }
         setupCustomDrawerMenu()
+
+        //==================== 폴더 리스트 어댑터 초기화 ====================================================//
+        folderAdapter = FolderAdapter { folderItem, itemView ->
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+            val isSameFolder = if (currentFragment is HomeFragment) {
+                val currentFolder = currentFragment.arguments?.getString("folderName") ?: "기본"
+                currentFolder == folderItem.name
+            } else false
+
+            if (!isSameFolder) {
+                animateSearchBar(false)
+                binding.searchBar.setText("")
+                val fragment = HomeFragment().apply {
+                    arguments = bundleOf("folderName" to folderItem.name)
+                }
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, fragment)
+                    .commit()
+                invalidateOptionsMenu()
+                updateSelectedMenu(itemView)
+            }
+
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+
+        binding.customMenuList.folderRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.customMenuList.folderRecyclerView.adapter = folderAdapter
+        updateFolderList()
+        //=======================================================================================//
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -279,9 +317,7 @@ class MainActivity : AppCompatActivity() {
             val isDrawerOpen = binding.drawerLayout.isDrawerOpen(GravityCompat.START)
             Log.e("TAG", "isDrawerOpen : $isDrawerOpen")
 
-            /*
-             * 서랖 메뉴 닫기
-             * */
+            // 서랍 메뉴 닫기
             if (isDrawerOpen) {
                 binding.drawerLayout.closeDrawer(GravityCompat.START)
                 return
@@ -307,7 +343,7 @@ class MainActivity : AppCompatActivity() {
 
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
-            .setCancelable(false)
+            .setCancelable(true)
             .create()
 
         dialog.setOnKeyListener { _, keyCode, event ->
@@ -329,11 +365,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show()
-
-//        dialog.window?.setLayout(
-//            ViewGroup.LayoutParams.MATCH_PARENT,
-//            ViewGroup.LayoutParams.WRAP_CONTENT
-//        )
 
         /*
         * 태블릿 최대 크기 지정 600dp
@@ -384,32 +415,40 @@ class MainActivity : AppCompatActivity() {
         val menuTrash = findViewById<View>(R.id.menu_trash)
         val menuAddFolder = findViewById<View>(R.id.menu_add_folder)
         val myFolders = findViewById<LinearLayout>(R.id.menu_my_folders)
-        val folderContainer = findViewById<LinearLayout>(R.id.folder_container)
         val toggleIcon = findViewById<ImageView>(R.id.folder_toggle_icon)
-        loadFoldersFromPrefs().forEach { folderName ->
-            addFolderMenu(folderName)
-        }
-
-
-        (folderContainer.parent as ViewGroup).layoutTransition =
-            LayoutTransition().apply {
-                enableTransitionType(LayoutTransition.CHANGING)
-            }
-
 
         myFolders.setOnClickListener {
-            rotateArrow(toggleIcon, isFolderExpanded)
+            // 축 기준을 위로 설정
+            binding.customMenuList.folderRecyclerView.pivotY = 0f
 
             if (isFolderExpanded) {
-                folderContainer.visibility = View.GONE
+                // 접기: 위쪽부터 축소
+                binding.customMenuList.folderRecyclerView.animate()
+                    .scaleY(0f)
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction {
+                        binding.customMenuList.folderRecyclerView.visibility = View.GONE
+                    }
+                    .start()
+                rotateArrow(toggleIcon, true)
             } else {
-                folderContainer.visibility = View.VISIBLE
+                // 펼치기: 위쪽부터 확대
+                binding.customMenuList.folderRecyclerView.visibility = View.VISIBLE
+                binding.customMenuList.folderRecyclerView.scaleY = 0f
+                binding.customMenuList.folderRecyclerView.alpha = 0f
+                binding.customMenuList.folderRecyclerView.pivotY = 0f // 중요
+                binding.customMenuList.folderRecyclerView.animate()
+                    .scaleY(1f)
+                    .alpha(1f)
+                    .setDuration(200)
+                    .start()
+                rotateArrow(toggleIcon, false)
             }
+
             isFolderExpanded = !isFolderExpanded
             saveFolderExpandedState(isFolderExpanded)
-
         }
-
 
         menuHome.setOnClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
@@ -477,14 +516,23 @@ class MainActivity : AppCompatActivity() {
 
         // 앱 시작 시 기본 선택 메뉴 설정
         selectedMenu = menuHome
-        selectedMenu.isSelected = true
+        selectedMenu?.isSelected = true
     }
 
     private fun updateSelectedMenu(newSelected: View) {
-        selectedMenu.isSelected = false
-        newSelected.isSelected = true
-        selectedMenu = newSelected
+        selectedMenu?.isSelected = false
+        // 어댑터 아이템 뷰 아닌지 확인
+        if (newSelected.tag is FolderItem) {
+            folderAdapter.selectFolderByName((newSelected.tag as FolderItem).name)
+            selectedMenu = null
+        } else {
+            // 어댑터 외 메뉴면 선택 표시 + 어댑터 선택 해제
+            newSelected.isSelected = true
+            selectedMenu = newSelected
+            folderAdapter.clearSelection()
+        }
     }
+
 
     private fun showFolderInputDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_folder, null)
@@ -494,7 +542,7 @@ class MainActivity : AppCompatActivity() {
 
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
-            .setCancelable(false)
+            .setCancelable(true)
             .create()
 
         dialog.setOnKeyListener { _, keyCode, event ->
@@ -515,18 +563,29 @@ class MainActivity : AppCompatActivity() {
             val prefs = getSharedPreferences("folder_prefs", MODE_PRIVATE)
             val folderSet = prefs.getStringSet("folder_list", emptySet()) ?: emptySet()
 
+            val existingNames = folderSet.mapNotNull {
+                it.split("|||").getOrNull(0)
+            }.toSet()
+
             when {
                 folderName.isEmpty() -> {
-                    etFolderName.error = getString(R.string.input_folder_name)
+                    hideKeyboard(etFolderName)
+                    CustomToastMessage.createToast(this, getString(R.string.input_folder_name))
+//                    etFolderName.error = getString(R.string.input_folder_name)
                 }
 
-                folderSet.contains(folderName) -> {
-                    etFolderName.error = getString(R.string.error_folder_name_exists)
+                existingNames.contains(folderName) -> {
+                    hideKeyboard(etFolderName)
+                    CustomToastMessage.createToast(
+                        this,
+                        getString(R.string.error_folder_name_exists)
+                    )
+//                    etFolderName.error = getString(R.string.error_folder_name_exists)
                 }
 
                 else -> {
-                    addFolderMenu(folderName)
                     saveFolderToPrefs(folderName)
+                    updateFolderList()
                     dialog.dismiss()
                 }
             }
@@ -554,74 +613,60 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun addFolderMenu(name: String) {
-        val folderContainer = findViewById<LinearLayout>(R.id.folder_container)
-
-        val folderView = layoutInflater.inflate(R.layout.item_drawer_folder, folderContainer, false)
-
-        val icon = folderView.findViewById<ImageView>(R.id.img_icon)
-        val text = folderView.findViewById<TextView>(R.id.tv_folder_name)
-
-        icon.setImageResource(R.drawable.ic_folder)
-        text.text = name
-
-        folderView.setOnClickListener {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
-
-            val isSameFolder = if (currentFragment is HomeFragment) {
-                val currentFolder = currentFragment.arguments?.getString("folderName") ?: "기본"
-                currentFolder == name
-            } else {
-                false
-            }
-
-            if (!isSameFolder) {
-
-                animateSearchBar(false)
-                binding.searchBar.setText("")
-
-                val fragment = HomeFragment().apply {
-                    arguments = bundleOf("folderName" to name)
-                }
-
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.nav_host_fragment, fragment)
-                    .commit()
-
-                invalidateOptionsMenu()
-            }
-            updateSelectedMenu(folderView)
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-        }
-
-        folderContainer.addView(folderView)
-    }
-
-    fun saveFolderToPrefs(folderName: String) {
+    /**
+     * 신규 폴더명 저장 (폴더명|||TimeStamp)
+     * @param folderName - 폴더명
+     * */
+    private fun saveFolderToPrefs(folderName: String) {
         val prefs = getSharedPreferences("folder_prefs", Context.MODE_PRIVATE)
         val folderSet =
             prefs.getStringSet("folder_list", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
-        folderSet.add(folderName)
+
+        // 이미 같은 이름 있는지 확인 (기존 항목 제거)
+        folderSet.removeIf { it.startsWith("$folderName|||") }
+
+        // 저장: 이름 + 타임스탬프
+        val item = "$folderName|||${System.currentTimeMillis()}"
+        folderSet.add(item)
+
         prefs.edit { putStringSet("folder_list", folderSet) }
-    }
 
-    private fun loadFoldersFromPrefs(): Set<String> {
-        val prefs = getSharedPreferences("folder_prefs", Context.MODE_PRIVATE)
-        return prefs.getStringSet("folder_list", emptySet()) ?: emptySet()
-    }
-
-    /*
-    * 서랍 메뉴 새로 고침
-    * */
-    fun refreshFolderMenus() {
-        val folderContainer = findViewById<LinearLayout>(R.id.folder_container)
-        folderContainer.removeAllViews()
-
-        loadFoldersFromPrefs().forEach { folderName ->
-            addFolderMenu(folderName)
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+        if (currentFragment is ManageFoldersFragment) {
+            currentFragment.refreshFolderList()
         }
     }
 
+    /**
+     * 저장된 폴더 목록 조회
+     * @return - 폴더 목록
+     * */
+    private fun loadFoldersFromPrefs(): List<String> {
+        val prefs = getSharedPreferences("folder_prefs", Context.MODE_PRIVATE)
+        val folderSet = prefs.getStringSet("folder_list", emptySet()) ?: emptySet()
+
+        return folderSet
+            .mapNotNull {
+                val parts = it.split("|||")
+                if (parts.size == 2) parts[0] to parts[1].toLongOrNull() else null
+            }
+            .sortedByDescending { it.second } // 최신순 정렬
+            .map { it.first } // 이름만 추출
+    }
+
+    /**
+     * 폴더 목록 표시하는 리사이클러뷰 데이터 갱신
+     * */
+    fun updateFolderList() {
+        val folderSet = loadFoldersFromPrefs()
+        val folderList = folderSet.map { FolderItem(it) }
+        folderAdapter.submitList(folderList) {
+            // submitList 완료된 후 콜백
+            folderAdapter.selectedFolderName?.let {
+                folderAdapter.selectFolderByName(it)
+            }
+        }
+    }
 
     private fun showPopupMenu(anchor: View) {
         val popup = PopupMenu(this, anchor)
@@ -648,10 +693,9 @@ class MainActivity : AppCompatActivity() {
         popup.show()
     }
 
-
-    /*
-    * EditText focus 해제 , 키보드 내리기
-    * */
+    /**
+     * EditText focus 해제 , 키보드 내리기
+     * */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.action == MotionEvent.ACTION_DOWN) {
             val v = currentFocus
@@ -674,7 +718,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun rotateArrow(view: View, expanded: Boolean) {
         val to = if (expanded) -90f else 0f
-
         view.animate()
             .rotation(to)
             .setDuration(260)
@@ -683,24 +726,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun restoreFolderExpandedState() {
-        isFolderExpanded = prefs.getBoolean(PREF_KEY_FOLDER_EXPANDED, true)
+        isFolderExpanded = prefs.getBoolean(preferenceKeyFolderExpanded, true)
         Log.e("TAG", "isFolderExpanded: $isFolderExpanded")
 
-        val folderContainer = findViewById<LinearLayout>(R.id.folder_container)
         val toggleIcon = findViewById<ImageView>(R.id.folder_toggle_icon)
 
         if (isFolderExpanded) {
-            folderContainer.visibility = View.VISIBLE
+            binding.customMenuList.folderRecyclerView.visibility = View.VISIBLE
             toggleIcon.rotation = 0f
         } else {
+            binding.customMenuList.folderRecyclerView.visibility = View.GONE
             toggleIcon.rotation = -90f
-            folderContainer.visibility = View.GONE
         }
     }
 
     private fun saveFolderExpandedState(expanded: Boolean) {
-        prefs.edit { putBoolean(PREF_KEY_FOLDER_EXPANDED, expanded) }
+        prefs.edit { putBoolean(preferenceKeyFolderExpanded, expanded) }
     }
-
 
 }

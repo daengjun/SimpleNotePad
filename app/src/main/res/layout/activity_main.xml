@@ -62,12 +62,14 @@
 
     <LinearLayout
         android:id="@+id/custom_drawer"
-        android:layout_width="200dp"
+        android:layout_width="220dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:layout_marginTop="?attr/actionBarSize"
         android:orientation="vertical">
 
-        <include layout="@layout/drawer_custom_menu" />
+        <include
+            android:id="@+id/customMenuList"
+            layout="@layout/drawer_custom_menu" />
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

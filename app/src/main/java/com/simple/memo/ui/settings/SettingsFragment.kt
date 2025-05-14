@@ -86,11 +86,33 @@ class SettingsFragment : Fragment() {
         }
 
         binding.manageFolder.setOnClickListener {
-            showManageFoldersDialog()
+
+            val prefs = requireContext().getSharedPreferences("folder_prefs", Context.MODE_PRIVATE)
+            val folderSet =
+                prefs.getStringSet("folder_list", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
+
+            if (folderSet.isEmpty()) {
+                CustomToastMessage.createToast(
+                    requireContext(),
+                    getString(R.string.no_folders_to_manage)
+                ).show()
+                return@setOnClickListener
+            }
+
+            val manageFoldersFragment = ManageFoldersFragment()
+
+            requireActivity().supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fade_in,
+                    R.anim.fade_out,
+                    R.anim.fade_in,
+                    R.anim.fade_out
+                )
+                .replace(R.id.nav_host_fragment, manageFoldersFragment)
+                .addToBackStack(null)
+                .commit()
         }
-
     }
-
 
     private fun showResetDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_delete, null)
@@ -99,7 +121,7 @@ class SettingsFragment : Fragment() {
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
-            .setCancelable(false)
+            .setCancelable(true)
             .create()
 
         dialog.setOnKeyListener { _, keyCode, event ->
@@ -128,84 +150,6 @@ class SettingsFragment : Fragment() {
 
         dialog.show()
 
-//        dialog.window?.setLayout(
-//            ViewGroup.LayoutParams.MATCH_PARENT,
-//            ViewGroup.LayoutParams.WRAP_CONTENT
-//        )
-
-        /*
-        * 태블릿 최대 크기 지정 600dp
-        * */
-        val dialogWidth = resources.displayMetrics.widthPixels
-        val maxDialogWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
-
-        dialog.window?.setLayout(
-            min(dialogWidth, maxDialogWidth),
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-    }
-
-    private fun showManageFoldersDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_manage_folders, null)
-        val recyclerView = dialogView.findViewById<RecyclerView>(R.id.recycler_folders)
-        val prefs = requireContext().getSharedPreferences("folder_prefs", Context.MODE_PRIVATE)
-        val folderSet =
-            prefs.getStringSet("folder_list", mutableSetOf())?.toMutableSet() ?: mutableSetOf()
-
-        if (folderSet.isEmpty()) {
-            CustomToastMessage.createToast(
-                requireContext(),
-                getString(R.string.no_folders_to_manage)
-            ).show()
-            return
-        }
-
-        val folderList = folderSet.toMutableList()
-        val memoViewModel = ViewModelProvider(this)[MemoViewModel::class.java]
-
-        Log.e("TAG", "showManageFoldersDialog: $folderList")
-
-        val adapter = ManageFolderAdapter(
-            folderList,
-            onRename = { oldName, newName ->
-                folderSet.remove(oldName)
-                folderSet.add(newName)
-                prefs.edit { putStringSet("folder_list", folderSet) }
-                memoViewModel.renameFolder(oldName, newName)
-                (activity as? MainActivity)?.refreshFolderMenus() // ← 여기에!
-            },
-            onDelete = { folderName ->
-                folderSet.remove(folderName)
-                prefs.edit { putStringSet("folder_list", folderSet) }
-                memoViewModel.moveMemosToDefault(folderName)
-                (activity as? MainActivity)?.refreshFolderMenus() // ← 여기에!
-            }
-        )
-
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = adapter
-
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setCancelable(false)
-            .create()
-
-        dialog.setOnKeyListener { _, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-                dialog.dismiss()
-                true
-            } else {
-                false
-            }
-        }
-
-        dialog.show()
-
-//        dialog.window?.setLayout(
-//            ViewGroup.LayoutParams.MATCH_PARENT,
-//            ViewGroup.LayoutParams.WRAP_CONTENT
-//        )
-
         /*
         * 태블릿 최대 크기 지정 600dp
         * */
@@ -222,6 +166,4 @@ class SettingsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-
 }

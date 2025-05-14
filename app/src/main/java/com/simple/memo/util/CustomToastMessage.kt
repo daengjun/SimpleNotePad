@@ -9,8 +9,11 @@ import com.simple.memo.R
 
 
 object CustomToastMessage {
-
+    private var currentToast: Toast? = null
     fun createToast(context: Context, message: String): Toast {
+        // 기존 토스트 메시지 취소
+        currentToast?.cancel()
+
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.custom_toast, null)
 
@@ -19,8 +22,10 @@ object CustomToastMessage {
 
         return Toast(context).apply {
             setGravity(Gravity.BOTTOM or Gravity.CENTER, 0, 16.toPx(context))
-            duration = Toast.LENGTH_LONG
+            duration = Toast.LENGTH_SHORT
             this.view = view
+            show()
+            currentToast = this
         }
     }
 

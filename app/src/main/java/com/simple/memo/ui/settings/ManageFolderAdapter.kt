@@ -15,24 +15,30 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.simple.memo.R
+import com.simple.memo.util.CustomToastMessage
 import kotlin.math.min
 
 class ManageFolderAdapter(
-    private val folders: MutableList<String>,
+    private var folders: MutableList<String>,
     private val onRename: (oldName: String, newName: String) -> Unit,
     private val onDelete: (folderName: String) -> Unit
 ) : RecyclerView.Adapter<ManageFolderAdapter.FolderViewHolder>() {
 
     inner class FolderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val nameText: TextView = view.findViewById(R.id.tv_folder_name)
-        val editBtn: ImageView = view.findViewById(R.id.btn_edit)
-        val deleteBtn: ImageView = view.findViewById(R.id.btn_delete)
+        val editBtn: TextView = view.findViewById(R.id.btn_edit)
+        val deleteBtn: TextView = view.findViewById(R.id.btn_delete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_manage_folder, parent, false)
         return FolderViewHolder(view)
+    }
+
+    fun updateData(folders: MutableList<String>) {
+        this.folders = folders
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: FolderViewHolder, position: Int) {
@@ -53,7 +59,7 @@ class ManageFolderAdapter(
 
             val dialog = AlertDialog.Builder(context)
                 .setView(dialogView)
-                .setCancelable(false)
+                .setCancelable(true)
                 .create()
 
             dialog.setOnKeyListener { _, keyCode, event ->
@@ -76,6 +82,11 @@ class ManageFolderAdapter(
                 val prefs = context.getSharedPreferences("folder_prefs", Context.MODE_PRIVATE)
                 val folderSet = prefs.getStringSet("folder_list", emptySet()) ?: emptySet()
 
+                // 이름만 추출해서 비교용 Set 생성
+                val existingNames = folderSet.mapNotNull {
+                    it.split("|||").getOrNull(0)
+                }.toSet()
+
                 val currentPosition = holder.bindingAdapterPosition
                 if (currentPosition == RecyclerView.NO_POSITION || currentPosition >= folders.size) {
                     dialog.dismiss()
@@ -85,7 +96,8 @@ class ManageFolderAdapter(
                 when {
                     newName.isEmpty() -> {
                         hideKeyboard(folderEditText)
-                        folderEditText.error = context.getString(R.string.input_folder_name)
+                        CustomToastMessage.createToast(context,context.getString(R.string.input_folder_name)).show()
+//                        folderEditText.error = context.getString(R.string.input_folder_name)
                     }
 
                     newName == folderName -> {
@@ -93,9 +105,10 @@ class ManageFolderAdapter(
                         dialog.dismiss()
                     }
 
-                    folderSet.contains(newName) -> {
+                    existingNames.contains(newName) -> {
                         hideKeyboard(folderEditText)
-                        folderEditText.error = context.getString(R.string.error_folder_name_exists)
+                        CustomToastMessage.createToast(context,context.getString(R.string.error_folder_name_exists)).show()
+//                        folderEditText.error = context.getString(R.string.error_folder_name_exists)
                     }
 
                     else -> {
@@ -110,16 +123,12 @@ class ManageFolderAdapter(
 
             dialog.show()
 
-//            dialog.window?.setLayout(
-//                ViewGroup.LayoutParams.MATCH_PARENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT
-//            )
-
             dialog.window?.let { window ->
                 val params = window.attributes
                 val screenWidth = holder.itemView.context.resources.displayMetrics.widthPixels
                 val dialogWidth = (screenWidth * 1.0f).toInt() // 100퍼
-                val maxDialogWidth = holder.itemView.context.resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+                val maxDialogWidth =
+                    holder.itemView.context.resources.getDimensionPixelSize(R.dimen.dialog_max_width)
 
                 params.width = min(dialogWidth, maxDialogWidth)
                 params.height = ViewGroup.LayoutParams.WRAP_CONTENT
@@ -139,7 +148,7 @@ class ManageFolderAdapter(
 
             val dialog = AlertDialog.Builder(context)
                 .setView(dialogView)
-                .setCancelable(false)
+                .setCancelable(true)
                 .create()
 
             dialog.setOnKeyListener { _, keyCode, event ->
@@ -159,9 +168,9 @@ class ManageFolderAdapter(
                 val safePosition = holder.bindingAdapterPosition
                 if (safePosition != RecyclerView.NO_POSITION && safePosition < folders.size) {
                     val deletedName = folders[safePosition]
-                    onDelete(deletedName)
                     folders.removeAt(safePosition)
                     notifyItemRemoved(safePosition)
+                    onDelete(deletedName)
                     dialog.dismiss()
                 } else {
                     dialog.dismiss()
@@ -169,17 +178,12 @@ class ManageFolderAdapter(
             }
 
             dialog.show()
-
-//            dialog.window?.setLayout(
-//                ViewGroup.LayoutParams.MATCH_PARENT,
-//                ViewGroup.LayoutParams.WRAP_CONTENT
-//            )
-
             dialog.window?.let { window ->
                 val params = window.attributes
                 val screenWidth = holder.itemView.context.resources.displayMetrics.widthPixels
                 val dialogWidth = (screenWidth * 1.0f).toInt() // 100퍼
-                val maxDialogWidth = holder.itemView.context.resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+                val maxDialogWidth =
+                    holder.itemView.context.resources.getDimensionPixelSize(R.dimen.dialog_max_width)
 
                 params.width = min(dialogWidth, maxDialogWidth)
                 params.height = ViewGroup.LayoutParams.WRAP_CONTENT

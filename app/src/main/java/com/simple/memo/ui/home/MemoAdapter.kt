@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.util.TypedValue
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -77,6 +78,23 @@ class MemoAdapter(
                 } else {
                     onItemClick(memo)
                 }
+            }
+
+            // 터치시 살짝 작아지는 애니메이션
+            itemView.setOnTouchListener { v, event ->
+                if (!isMultiSelectMode) {
+                    when (event.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            v.animate().scaleX(0.98f).scaleY(0.98f).setDuration(100).start()
+                        }
+
+                        MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                            v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
+                        }
+                    }
+
+                }
+                false
             }
 
             itemView.setOnLongClickListener {

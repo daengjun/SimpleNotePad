@@ -1,6 +1,5 @@
 package com.simple.memo.ui.home
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -14,7 +13,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -46,8 +44,17 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         memoViewModel = ViewModelProvider(this)[MemoViewModel::class.java]
 
-        // null = 전체
+        // null = 모든 메모
         currentFolderName = arguments?.getString("folderName")
+        Log.e("TAG", "폴더명 : $currentFolderName")
+
+        if (currentFolderName == null) {
+            binding.pathTv.text = requireContext().getString(R.string.all_memo)
+            binding.icImageView.setImageResource(R.drawable.ic_home)
+        } else {
+            binding.pathTv.text = currentFolderName
+            binding.icImageView.setImageResource(R.drawable.ic_folder)
+        }
 
         val searchBar = requireActivity().findViewById<EditText>(R.id.search_bar)
 
@@ -65,7 +72,6 @@ class HomeFragment : Fragment() {
                         }
                 }
             }
-
             override fun afterTextChanged(s: Editable?) {}
         }
 
@@ -179,16 +185,23 @@ class HomeFragment : Fragment() {
 
 
     fun startMultiSelectMode() {
-        if (isMultiSelectMode) return
-        isMultiSelectMode = true
-        memoAdapter.setMultiSelectMode(true)
-        binding.fabAdd.setImageResource(R.drawable.ic_delete)
+        Log.e("TAG", "memo list size : ${memoViewModel.allMemos.value?.size}")
+        val memoCount = memoViewModel.allMemos.value?.size ?: 0
+        if (memoCount > 0) {
+            if (isMultiSelectMode) return
+            isMultiSelectMode = true
+            memoAdapter.setMultiSelectMode(true)
+            binding.fabAdd.setImageResource(R.drawable.ic_delete)
 
-        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
-            .animate()
-            .alpha(1f)
-            .setDuration(200)
-            .start()
+            (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
+                .animate()
+                .alpha(1f)
+                .setDuration(200)
+                .start()
+        } else {
+            CustomToastMessage.createToast(requireContext(), getString(R.string.empty_memo_list))
+                .show()
+        }
     }
 
     fun exitMultiSelectMode() {
@@ -205,7 +218,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun showDeleteConfirmDialog(selectedMemos: List<MemoEntity>) {
-
         val dialogView = layoutInflater.inflate(R.layout.dialog_multi_delete, null)
         val contentText = dialogView.findViewById<TextView>(R.id.content_text)
         val btnCancel = dialogView.findViewById<TextView>(R.id.btn_cancel)
@@ -214,7 +226,7 @@ class HomeFragment : Fragment() {
 
         val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setView(dialogView)
-            .setCancelable(false)
+            .setCancelable(true)
             .create()
 
         dialog.setOnKeyListener { _, keyCode, event ->
@@ -237,11 +249,6 @@ class HomeFragment : Fragment() {
 
         dialog.show()
 
-//        dialog.window?.setLayout(
-//            ViewGroup.LayoutParams.MATCH_PARENT,
-//            ViewGroup.LayoutParams.WRAP_CONTENT
-//        )
-
         /*
         * 태블릿 최대 크기 지정 600dp
         * */
@@ -252,9 +259,7 @@ class HomeFragment : Fragment() {
             min(dialogWidth, maxDialogWidth),
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-
     }
-
 
     private fun moveToTrash(selectedMemos: List<MemoEntity>) {
         selectedMemos.forEach { memo ->
@@ -265,7 +270,6 @@ class HomeFragment : Fragment() {
     }
 
     fun isMultiSelectMode(): Boolean = isMultiSelectMode
-
 }
 
 

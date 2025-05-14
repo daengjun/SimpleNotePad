@@ -46,4 +46,7 @@
     <string name="all_memos_deleted">All memo data has been deleted</string>
     <string name="settings_etc">Other Settings</string>
     <string name="my_folder">My folder</string>
+    <string name="empty_memo_list">There are no memos to choose from</string>
+    <string name="edit">Edit</string>
+    <string name="delete_single_memo">Are you sure you want to permanently delete the memo?</string>
 </resources>

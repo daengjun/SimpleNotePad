@@ -46,7 +46,9 @@ class TrashFragment : Fragment() {
                 val bottomSheet = TrashMemoBottomSheetDialogFragment(
                     memo = longClickedMemo,
                     onDeleteClick = { memoToDelete ->
-                        memoViewModel.deleteMemo(memoToDelete)
+                        showDeleteConfirmDialog {
+                            memoViewModel.deleteMemo(memoToDelete)
+                        }
                     }, onRestoreClick = { memoToDelete ->
                         val updatedMemo = memoToDelete.copy(
                             isDeleted = false
@@ -87,28 +89,38 @@ class TrashFragment : Fragment() {
     }
 
     fun startMultiSelectMode() {
-        isMultiSelectMode = true
-        trashMemoAdapter.setMultiSelectMode(true)
+        val memoCount = memoViewModel.deleteAllMemos.value?.size ?: 0
 
-        binding.fabAdd.apply {
-            alpha = 0f
-            scaleX = 0.8f
-            scaleY = 0.8f
-            visibility = View.VISIBLE
+        if (memoCount > 0) {
 
-            animate()
+            isMultiSelectMode = true
+            trashMemoAdapter.setMultiSelectMode(true)
+
+            binding.fabAdd.apply {
+                alpha = 0f
+                scaleX = 0.8f
+                scaleY = 0.8f
+                visibility = View.VISIBLE
+
+                animate()
+                    .alpha(1f)
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(200)
+                    .start()
+            }
+
+            (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
+                .animate()
                 .alpha(1f)
-                .scaleX(1f)
-                .scaleY(1f)
                 .setDuration(200)
                 .start()
+
+        } else {
+            CustomToastMessage.createToast(requireContext(), getString(R.string.empty_memo_list))
+                .show()
         }
 
-        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
-            .animate()
-            .alpha(1f)
-            .setDuration(200)
-            .start()
 
     }
 
@@ -149,7 +161,7 @@ class TrashFragment : Fragment() {
 
         val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setView(dialogView)
-            .setCancelable(false)
+            .setCancelable(true)
             .create()
 
         dialog.setOnKeyListener { _, keyCode, event ->
@@ -170,13 +182,52 @@ class TrashFragment : Fragment() {
             exitMultiSelectMode()
             dialog.dismiss()
         }
-
         dialog.show()
 
-//        dialog.window?.setLayout(
-//            ViewGroup.LayoutParams.MATCH_PARENT,
-//            ViewGroup.LayoutParams.WRAP_CONTENT
-//        )
+        /*
+        * 태블릿 최대 크기 지정 600dp
+        * */
+        val dialogWidth = resources.displayMetrics.widthPixels
+        val maxDialogWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+
+        dialog.window?.setLayout(
+            min(dialogWidth, maxDialogWidth),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
+
+    private fun showDeleteConfirmDialog(onDelete: () -> Unit) {
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_multi_delete, null)
+        val contentText = dialogView.findViewById<TextView>(R.id.content_text)
+        val btnCancel = dialogView.findViewById<TextView>(R.id.btn_cancel)
+        val btnConfirm = dialogView.findViewById<TextView>(R.id.btn_confirm)
+
+        contentText.text = getString(R.string.delete_single_memo)
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        dialog.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                dialog.dismiss()
+                true
+            } else {
+                false
+            }
+        }
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnConfirm.setOnClickListener {
+            onDelete()
+            dialog.dismiss()
+        }
+        dialog.show()
 
         /*
         * 태블릿 최대 크기 지정 600dp
