@@ -49,4 +49,5 @@
     <string name="empty_memo_list">There are no memos to choose from</string>
     <string name="edit">Edit</string>
     <string name="delete_single_memo">Are you sure you want to permanently delete the memo?</string>
+    <string name="review">Writing App Reviews</string>
 </resources>

@@ -7,20 +7,50 @@
     card_view:cardCornerRadius="12dp"
     card_view:cardElevation="4dp">
 
-    <TextView
-        android:id="@+id/select_memo"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:drawableStart="@drawable/ic_check"
-        android:drawablePadding="10dp"
-        android:foreground="?attr/selectableItemBackground"
-        android:minWidth="180dp"
-        android:paddingStart="20dp"
-        android:paddingTop="16dp"
-        android:paddingEnd="20dp"
-        android:paddingBottom="16dp"
-        android:text="@string/select_memo"
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/select_memo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:drawableStart="@drawable/ic_check"
+            android:drawablePadding="10dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:minWidth="180dp"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="16dp"
+            android:text="@string/select_memo"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+<LinearLayout
+    android:background="#90524F4F"
+    android:layout_width="match_parent"
+    android:layout_height="1px"/>
+
+        <TextView
+            android:id="@+id/write_review"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:drawableStart="@drawable/ic_half_star"
+            android:drawablePadding="10dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:minWidth="180dp"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="16dp"
+            android:text="@string/review"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
 </androidx.cardview.widget.CardView>

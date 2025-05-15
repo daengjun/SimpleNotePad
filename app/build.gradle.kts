@@ -16,8 +16,8 @@ android {
         applicationId = "com.simple.memo"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
-        versionName = "4.0"
+        versionCode = 6
+        versionName = "1.0.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -46,6 +46,8 @@ kapt {
 }
 
 dependencies {
+    implementation("com.google.android.play:app-update:2.1.0")
+    implementation("com.google.android.play:app-update-ktx:2.1.0")
     implementation("androidx.recyclerview:recyclerview:1.3.1")
     implementation(libs.androidx.room.runtime)
     kapt(libs.androidx.room.compiler)

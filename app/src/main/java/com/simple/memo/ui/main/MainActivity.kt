@@ -1,9 +1,12 @@
 package com.simple.memo.ui.main
 
 import android.animation.ValueAnimator
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -43,17 +46,8 @@ import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.simple.memo.ui.settings.ManageFoldersFragment
 import com.simple.memo.util.CustomToastMessage
-import org.json.JSONArray
 import kotlin.math.min
 
-
-/*
-* TODO
-*  1.메모 비었을때 화면에 알림 표시 (신규메모작성유도?) , 휴지통도 마찬가지
-*  3.인앱 업데이트 구현
-*  4.평점 페이지로 이동 시키기
-*  4.스토어 업데이트
-* */
 
 class MainActivity : AppCompatActivity() {
 
@@ -202,6 +196,7 @@ class MainActivity : AppCompatActivity() {
         binding.customMenuList.folderRecyclerView.adapter = folderAdapter
         updateFolderList()
         //=======================================================================================//
+        // checkForAppUpdate()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -422,7 +417,7 @@ class MainActivity : AppCompatActivity() {
             binding.customMenuList.folderRecyclerView.pivotY = 0f
 
             if (isFolderExpanded) {
-                // 접기: 위쪽부터 축소
+                // 접기
                 binding.customMenuList.folderRecyclerView.animate()
                     .scaleY(0f)
                     .alpha(0f)
@@ -433,7 +428,7 @@ class MainActivity : AppCompatActivity() {
                     .start()
                 rotateArrow(toggleIcon, true)
             } else {
-                // 펼치기: 위쪽부터 확대
+                // 펼치기
                 binding.customMenuList.folderRecyclerView.visibility = View.VISIBLE
                 binding.customMenuList.folderRecyclerView.scaleY = 0f
                 binding.customMenuList.folderRecyclerView.alpha = 0f
@@ -571,7 +566,6 @@ class MainActivity : AppCompatActivity() {
                 folderName.isEmpty() -> {
                     hideKeyboard(etFolderName)
                     CustomToastMessage.createToast(this, getString(R.string.input_folder_name))
-//                    etFolderName.error = getString(R.string.input_folder_name)
                 }
 
                 existingNames.contains(folderName) -> {
@@ -580,7 +574,6 @@ class MainActivity : AppCompatActivity() {
                         this,
                         getString(R.string.error_folder_name_exists)
                     )
-//                    etFolderName.error = getString(R.string.error_folder_name_exists)
                 }
 
                 else -> {
@@ -625,7 +618,7 @@ class MainActivity : AppCompatActivity() {
         // 이미 같은 이름 있는지 확인 (기존 항목 제거)
         folderSet.removeIf { it.startsWith("$folderName|||") }
 
-        // 저장: 이름 + 타임스탬프
+        // 이름 + 타임스탬프
         val item = "$folderName|||${System.currentTimeMillis()}"
         folderSet.add(item)
 
@@ -690,6 +683,13 @@ class MainActivity : AppCompatActivity() {
             }
             popupWindow.dismiss()
         }
+
+        val writeReview = customView.findViewById<TextView>(R.id.write_review)
+        writeReview.setOnClickListener {
+            openPlayStoreReview(this)
+            popupWindow.dismiss()
+        }
+
         popup.show()
     }
 
@@ -744,4 +744,58 @@ class MainActivity : AppCompatActivity() {
         prefs.edit { putBoolean(preferenceKeyFolderExpanded, expanded) }
     }
 
+    /**
+     * 플레이스토어 리뷰 페이지로 이동
+     * */
+    private fun openPlayStoreReview(context: Context) {
+        val packageName = context.packageName
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName"))
+            intent.setPackage("com.android.vending")
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+            )
+            context.startActivity(intent)
+        }
+    }
+
+
+    /*
+    * 인앱 테스트 구현
+    * 내부앱 공유로 테스트
+    * */
+//    private val updateLauncher = registerForActivityResult(
+//        ActivityResultContracts.StartIntentSenderForResult()
+//    ) { result ->
+//        if (result.resultCode != Activity.RESULT_OK) {
+//            CustomToastMessage.createToast(this, "앱 업데이트 실패")
+//            Log.e("InAppUpdate", "Update flow failed! Result code: ${result.resultCode}")
+//        }
+//    }
+//
+//    /*
+//    * 앱 실행시 버전 확인
+//    * */
+//    private fun checkForAppUpdate() {
+//        val appUpdateManager = AppUpdateManagerFactory.create(this)
+//        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+//            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+//                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+//            ) {
+//                val appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+//                // 인앱 업데이트 진행
+//                appUpdateManager.startUpdateFlowForResult(
+//                    appUpdateInfo,
+//                    updateLauncher,
+//                    appUpdateOptions
+//                )
+//            }
+//        }.addOnFailureListener { error ->
+//            Log.e("TAG", "$error")
+//        }
+//    }
 }
+
