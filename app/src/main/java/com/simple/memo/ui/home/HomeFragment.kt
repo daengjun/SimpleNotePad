@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -17,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.Visibility
 import com.simple.memo.R
 import com.simple.memo.data.model.MemoEntity
 import com.simple.memo.databinding.FragmentHomeBinding
@@ -72,6 +75,7 @@ class HomeFragment : Fragment() {
                         }
                 }
             }
+
             override fun afterTextChanged(s: Editable?) {}
         }
 
@@ -160,11 +164,23 @@ class HomeFragment : Fragment() {
     private fun observeMemoList() {
         if (currentFolderName == null) {
             memoViewModel.allMemos.observe(viewLifecycleOwner) {
-                memoAdapter.submitList(it)
+                if (it.isEmpty()) {
+                    binding.emptyTv.visibility = VISIBLE
+                    memoAdapter.submitList(it)
+                } else {
+                    binding.emptyTv.visibility = GONE
+                    memoAdapter.submitList(it)
+                }
             }
         } else {
             memoViewModel.getMemosByFolder(currentFolderName!!).observe(viewLifecycleOwner) {
-                memoAdapter.submitList(it)
+                if (it.isEmpty()) {
+                    binding.emptyTv.visibility = VISIBLE
+                    memoAdapter.submitList(it)
+                } else {
+                    binding.emptyTv.visibility = GONE
+                    memoAdapter.submitList(it)
+                }
             }
         }
     }

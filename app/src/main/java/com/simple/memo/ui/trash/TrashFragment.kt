@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -68,7 +70,13 @@ class TrashFragment : Fragment() {
         binding.recyclerMemo.adapter = trashMemoAdapter
 
         memoViewModel.deleteAllMemos.observe(viewLifecycleOwner) { memos ->
-            trashMemoAdapter.submitList(memos)
+            if (memos.isEmpty()) {
+                binding.emptyTv.visibility = VISIBLE
+                trashMemoAdapter.submitList(memos)
+            } else {
+                binding.emptyTv.visibility = GONE
+                trashMemoAdapter.submitList(memos)
+            }
         }
 
         binding.fabAdd.setOnClickListener {

@@ -191,6 +191,20 @@
             android:visibility="gone" />
     </LinearLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/updateBtn"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="15dp"
+        android:text="@string/update"
+        android:visibility="gone"
+        app:backgroundTint="@color/selector_toggle_background"
+        app:cornerRadius="0dp"
+        app:strokeColor="@color/selector_toggle_stroke"
+        app:strokeWidth="1dp" />
+
     <!-- ▸ 오른쪽 구분선 -->
     <View
         android:layout_width="1dp"

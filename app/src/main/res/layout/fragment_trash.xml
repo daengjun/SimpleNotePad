@@ -29,8 +29,16 @@
             android:clipToPadding="false"
             android:paddingTop="15dp"
             android:scrollbars="vertical" />
-
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/emptyTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/empty_trash"
+        android:textColor="#8E8B8B"
+        android:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"

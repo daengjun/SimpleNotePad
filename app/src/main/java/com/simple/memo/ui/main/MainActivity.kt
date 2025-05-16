@@ -1,12 +1,15 @@
 package com.simple.memo.ui.main
 
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -14,6 +17,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.inputmethod.EditorInfo
@@ -24,6 +29,7 @@ import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -44,13 +50,19 @@ import com.simple.memo.viewModel.MemoViewModel
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.play.core.appupdate.AppUpdateInfo
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.simple.memo.ui.settings.ManageFoldersFragment
 import com.simple.memo.util.CustomToastMessage
 import kotlin.math.min
 
 
 class MainActivity : AppCompatActivity() {
-
+    private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var binding: ActivityMainBinding
     private lateinit var toggle: ActionBarDrawerToggle
     private var selectedMenu: View? = null
@@ -166,6 +178,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
         setupCustomDrawerMenu()
 
         //==================== 폴더 리스트 어댑터 초기화 ====================================================//
@@ -196,7 +209,7 @@ class MainActivity : AppCompatActivity() {
         binding.customMenuList.folderRecyclerView.adapter = folderAdapter
         updateFolderList()
         //=======================================================================================//
-        // checkForAppUpdate()
+        checkForAppUpdate()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -377,7 +390,7 @@ class MainActivity : AppCompatActivity() {
         val duration = 250L
         if (show) {
 
-            binding.searchBar.visibility = View.VISIBLE
+            binding.searchBar.visibility = VISIBLE
             binding.searchBar.alpha = 0f
             binding.searchBar.translationY = -binding.searchBar.height.toFloat()
             binding.searchBar.animate()
@@ -673,9 +686,22 @@ class MainActivity : AppCompatActivity() {
         popupWindow.elevation = 8f
         popupWindow.showAsDropDown(anchor)
 
+        val line1 = customView.findViewById<LinearLayout>(R.id.line1)
+        val line2 = customView.findViewById<LinearLayout>(R.id.line2)
         val memoSelectView = customView.findViewById<TextView>(R.id.select_memo)
+        val writeReview = customView.findViewById<TextView>(R.id.write_review)
+        val appVersion = customView.findViewById<TextView>(R.id.app_version)
+
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+        if (currentFragment !is HomeFragment) {
+            line1.visibility = GONE
+            line2.visibility = GONE
+            writeReview.visibility = GONE
+            appVersion.visibility = GONE
+        }
+
         memoSelectView.setOnClickListener {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+//            val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
             if (currentFragment is HomeFragment) {
                 currentFragment.startMultiSelectMode()
             } else if (currentFragment is TrashFragment) {
@@ -684,12 +710,15 @@ class MainActivity : AppCompatActivity() {
             popupWindow.dismiss()
         }
 
-        val writeReview = customView.findViewById<TextView>(R.id.write_review)
         writeReview.setOnClickListener {
             openPlayStoreReview(this)
             popupWindow.dismiss()
         }
 
+        appVersion.setOnClickListener {
+            showAppVersion()
+            popupWindow.dismiss()
+        }
         popup.show()
     }
 
@@ -767,35 +796,114 @@ class MainActivity : AppCompatActivity() {
     * 인앱 테스트 구현
     * 내부앱 공유로 테스트
     * */
-//    private val updateLauncher = registerForActivityResult(
-//        ActivityResultContracts.StartIntentSenderForResult()
-//    ) { result ->
-//        if (result.resultCode != Activity.RESULT_OK) {
-//            CustomToastMessage.createToast(this, "앱 업데이트 실패")
-//            Log.e("InAppUpdate", "Update flow failed! Result code: ${result.resultCode}")
-//        }
-//    }
-//
-//    /*
-//    * 앱 실행시 버전 확인
-//    * */
-//    private fun checkForAppUpdate() {
-//        val appUpdateManager = AppUpdateManagerFactory.create(this)
-//        appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
-//            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-//                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-//            ) {
-//                val appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
-//                // 인앱 업데이트 진행
-//                appUpdateManager.startUpdateFlowForResult(
-//                    appUpdateInfo,
-//                    updateLauncher,
-//                    appUpdateOptions
-//                )
-//            }
-//        }.addOnFailureListener { error ->
-//            Log.e("TAG", "$error")
-//        }
-//    }
+    private val updateLauncher = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode != Activity.RESULT_OK) {
+            // CustomToastMessage.createToast(this, getString(R.string.update_cancel))
+            Log.e("TAG", getString(R.string.update_cancel))
+            Log.e("InAppUpdate", "Update flow failed! Result code: ${result.resultCode}")
+        }
+    }
+
+    /*
+    * 앱 실행시 버전 확인
+    * */
+    private fun checkForAppUpdate() {
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+            if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                info.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+                binding.customMenuList.updateBtn.visibility = VISIBLE
+
+                binding.customMenuList.updateBtn.setOnClickListener {
+                    // 여기서 매번 최신 상태 확인
+                    appUpdateManager.appUpdateInfo.addOnSuccessListener { latestInfo ->
+                        if (latestInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                            latestInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                        ) {
+                            val appUpdateOptions =
+                                AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                            appUpdateManager.startUpdateFlowForResult(
+                                latestInfo,
+                                updateLauncher,
+                                appUpdateOptions
+                            )
+                        }
+                    }
+                }
+            }
+        }.addOnFailureListener { error ->
+            Log.e("TAG", "$error")
+        }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+            if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                val appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                appUpdateManager.startUpdateFlowForResult(
+                    info,
+                    updateLauncher,
+                    appUpdateOptions
+                )
+            }
+        }
+    }
+
+
+    private fun showAppVersion() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_app_version, null)
+        val btnConfirm = dialogView.findViewById<TextView>(R.id.btn_confirm)
+        val appVersionTextView = dialogView.findViewById<TextView>(R.id.et_folder_name)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        val version = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getPackageInfo(
+                packageName,
+                PackageManager.PackageInfoFlags.of(0)
+            ).versionName
+        } else {
+            @Suppress("DEPRECATION")
+            packageManager.getPackageInfo(packageName, 0).versionName
+        }
+
+        val prefix = getString(R.string.app_version_prefix)
+        appVersionTextView.text = "$prefix $version"
+
+        dialog.setOnKeyListener { _, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                dialog.dismiss()
+                true
+            } else {
+                false
+            }
+        }
+
+        btnConfirm.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+
+        /*
+        * 태블릿 최대 크기 지정 600dp
+        * */
+        val dialogWidth = resources.displayMetrics.widthPixels
+        val maxDialogWidth = resources.getDimensionPixelSize(R.dimen.dialog_max_width)
+
+        dialog.window?.setLayout(
+            min(dialogWidth, maxDialogWidth),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
 }
 

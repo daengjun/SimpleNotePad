@@ -22,7 +22,7 @@
     <string name="all_memo">모든 메모</string>
     <string name="setting">환경설정</string>
     <string name="trash">휴지통</string>
-    <string name="select_memo">메모 선택</string>
+    <string name="select_memo">다중 선택</string>
     <string name="input_folder_name">폴더명을 입력하세요</string>
     <string name="remove_all_memo">전체 메모 데이터가 삭제 됩니다.</string>
     <string name="exit_memo_app">메모앱 종료</string>
@@ -50,4 +50,10 @@
     <string name="empty_memo_list">선택할 수 있는 메모가 없습니다.</string>
     <string name="delete_single_memo">메모를 영구적으로 삭제하시겠습니까?</string>
     <string name="review">앱 후기 작성</string>
+    <string name="update">업데이트 진행</string>
+    <string name="empty_trash">휴지통이 비어 있습니다.</string>
+    <string name="empty_memo">작성된 메모가 없습니다.</string>
+    <string name="update_cancel">앱 업데이트 취소</string>
+    <string name="app_version">앱 버전 확인</string>
+    <string name="app_version_prefix">현재 앱 버전 :</string>
 </resources>
