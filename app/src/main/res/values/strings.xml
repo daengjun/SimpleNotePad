@@ -51,10 +51,9 @@
     <string name="delete_single_memo">Are you sure you want to permanently delete the memo?</string>
     <string name="review">Writing App Reviews</string>
     <string name="update">Proceed with the update</string>
-    <string name="empty_trash">Trash bin is empty</string>
+    <string name="empty_trash">No deleted memos</string>
     <string name="empty_memo">No saved memos</string>
     <string name="update_cancel">Cancel app updates</string>
     <string name="app_version">Check App Version</string>
     <string name="app_version_prefix">Current App Version :</string>
-
 </resources>
