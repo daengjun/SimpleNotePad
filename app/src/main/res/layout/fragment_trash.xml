@@ -31,14 +31,29 @@
             android:scrollbars="vertical" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/emptyTv"
+    <LinearLayout
+        android:id="@+id/emptyTrashLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/empty_trash"
-        android:textColor="#8E8B8B"
-        android:visibility="gone" />
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/ic_trash"
+            android:backgroundTint="#8E8B8B" />
+
+        <TextView
+            android:id="@+id/emptyTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/empty_trash"
+            android:textColor="#8E8B8B" />
+    </LinearLayout>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"

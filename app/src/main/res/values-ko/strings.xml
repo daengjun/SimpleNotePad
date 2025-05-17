@@ -51,8 +51,8 @@
     <string name="delete_single_memo">메모를 영구적으로 삭제하시겠습니까?</string>
     <string name="review">앱 후기 작성</string>
     <string name="update">업데이트 진행</string>
-    <string name="empty_trash">휴지통이 비어 있습니다.</string>
-    <string name="empty_memo">작성된 메모가 없습니다.</string>
+    <string name="empty_trash">삭제된 메모가 없습니다</string>
+    <string name="empty_memo">저장된 메모가 없습니다</string>
     <string name="update_cancel">앱 업데이트 취소</string>
     <string name="app_version">앱 버전 확인</string>
     <string name="app_version_prefix">현재 앱 버전 :</string>

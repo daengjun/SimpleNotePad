@@ -71,10 +71,10 @@ class TrashFragment : Fragment() {
 
         memoViewModel.deleteAllMemos.observe(viewLifecycleOwner) { memos ->
             if (memos.isEmpty()) {
-                binding.emptyTv.visibility = VISIBLE
+                binding.emptyTrashLayout.visibility = VISIBLE
                 trashMemoAdapter.submitList(memos)
             } else {
-                binding.emptyTv.visibility = GONE
+                binding.emptyTrashLayout.visibility = GONE
                 trashMemoAdapter.submitList(memos)
             }
         }

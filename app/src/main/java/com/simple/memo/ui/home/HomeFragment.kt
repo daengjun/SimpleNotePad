@@ -165,20 +165,20 @@ class HomeFragment : Fragment() {
         if (currentFolderName == null) {
             memoViewModel.allMemos.observe(viewLifecycleOwner) {
                 if (it.isEmpty()) {
-                    binding.emptyTv.visibility = VISIBLE
+                    binding.emptyMemoLayout.visibility = VISIBLE
                     memoAdapter.submitList(it)
                 } else {
-                    binding.emptyTv.visibility = GONE
+                    binding.emptyMemoLayout.visibility = GONE
                     memoAdapter.submitList(it)
                 }
             }
         } else {
             memoViewModel.getMemosByFolder(currentFolderName!!).observe(viewLifecycleOwner) {
                 if (it.isEmpty()) {
-                    binding.emptyTv.visibility = VISIBLE
+                    binding.emptyMemoLayout.visibility = VISIBLE
                     memoAdapter.submitList(it)
                 } else {
-                    binding.emptyTv.visibility = GONE
+                    binding.emptyMemoLayout.visibility = GONE
                     memoAdapter.submitList(it)
                 }
             }
