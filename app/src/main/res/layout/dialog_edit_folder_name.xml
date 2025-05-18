@@ -15,7 +15,7 @@
         android:paddingStart="15dp"
         android:text="@string/edit_folder_name"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
+        android:textSize="19sp"
         android:textStyle="bold" />
 
     <EditText
