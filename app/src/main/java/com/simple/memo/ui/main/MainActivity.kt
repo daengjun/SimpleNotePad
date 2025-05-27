@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
@@ -33,6 +34,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -58,6 +60,7 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
 import com.simple.memo.ui.settings.ManageFoldersFragment
 import com.simple.memo.util.CustomToastMessage
+import com.simple.memo.util.TextSizeUtils.getTextSizeValue
 import kotlin.math.min
 
 
@@ -68,6 +71,7 @@ class MainActivity : AppCompatActivity() {
     private var selectedMenu: View? = null
     private var isFolderExpanded = true
     private lateinit var folderAdapter: FolderAdapter
+    private lateinit var memoViewModel: MemoViewModel
 
     private val prefs by lazy {
         this.getSharedPreferences("drawer_prefs", Context.MODE_PRIVATE)
@@ -86,7 +90,7 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("settings_prefs", MODE_PRIVATE)
         val deleteCycle = prefs.getString("key_auto_delete", "never") ?: "never"
 
-        val memoViewModel = ViewModelProvider(this)[MemoViewModel::class.java]
+        memoViewModel = ViewModelProvider(this)[MemoViewModel::class.java]
         memoViewModel.autoDeleteOldTrash(deleteCycle)
 
         binding.searchBar.setOnEditorActionListener { _, actionId, _ ->
@@ -131,8 +135,13 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.addOnBackStackChangedListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
             val isWriteScreen = currentFragment is WriteMemoFragment
+            val isFolderScreen = currentFragment is ManageFoldersFragment
 
-            if (isWriteScreen) {
+            /*
+            * 뒤로가기 버튼 표시
+            * 폴더 관리 페이지,글 작성 페이지
+            * */
+            if (isWriteScreen || isFolderScreen) {
                 toggle.isDrawerIndicatorEnabled = false
                 toggle.setToolbarNavigationClickListener {
                     onBackPressedDispatcher.onBackPressed()
@@ -476,7 +485,7 @@ class MainActivity : AppCompatActivity() {
                     .replace(R.id.nav_host_fragment, HomeFragment())
                     .commit()
                 invalidateOptionsMenu()
-                binding.tvToolbarTitle.alpha = 0f
+                setToolbarTitleWithDrawable(this.getString(R.string.all_memo), R.drawable.ic_home)
             }
 
             updateSelectedMenu(menuHome)
@@ -485,7 +494,7 @@ class MainActivity : AppCompatActivity() {
 
         menuSettings.setOnClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
-            Log.e("TAG", "setupCustomDrawerMenu: ${currentFragment}")
+            Log.e("TAG", "setupCustomDrawerMenu: $currentFragment")
 
             if (currentFragment !is SettingsFragment) {
                 supportFragmentManager.beginTransaction()
@@ -493,7 +502,7 @@ class MainActivity : AppCompatActivity() {
                     .commit()
                 invalidateOptionsMenu()
                 hideKeyboard()
-                binding.tvToolbarTitle.alpha = 0f
+                setToolbarTitleVisible(true)
             }
             updateSelectedMenu(menuSettings)
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -501,7 +510,7 @@ class MainActivity : AppCompatActivity() {
 
         menuTrash.setOnClickListener {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
-            Log.e("TAG", "setupCustomDrawerMenu: ${currentFragment}")
+            Log.e("TAG", "setupCustomDrawerMenu: $currentFragment")
 
             if (currentFragment !is TrashFragment) {
                 supportFragmentManager.beginTransaction()
@@ -509,7 +518,8 @@ class MainActivity : AppCompatActivity() {
                     .commit()
                 invalidateOptionsMenu()
                 hideKeyboard()
-                binding.tvToolbarTitle.alpha = 0f
+                setToolbarTitleVisible(true)
+                setToolbarTitleWithDrawable(this.getString(R.string.trash), R.drawable.ic_delete)
             }
             updateSelectedMenu(menuTrash)
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -687,16 +697,16 @@ class MainActivity : AppCompatActivity() {
         popupWindow.showAsDropDown(anchor)
 
         val line1 = customView.findViewById<LinearLayout>(R.id.line1)
-        val line2 = customView.findViewById<LinearLayout>(R.id.line2)
+//        val line2 = customView.findViewById<LinearLayout>(R.id.line2)
         val memoSelectView = customView.findViewById<TextView>(R.id.select_memo)
-        val writeReview = customView.findViewById<TextView>(R.id.write_review)
+//        val writeReview = customView.findViewById<TextView>(R.id.write_review)
         val appVersion = customView.findViewById<TextView>(R.id.app_version)
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
         if (currentFragment !is HomeFragment) {
             line1.visibility = GONE
-            line2.visibility = GONE
-            writeReview.visibility = GONE
+//            line2.visibility = GONE
+//            writeReview.visibility = GONE
             appVersion.visibility = GONE
         }
 
@@ -710,10 +720,10 @@ class MainActivity : AppCompatActivity() {
             popupWindow.dismiss()
         }
 
-        writeReview.setOnClickListener {
-            openPlayStoreReview(this)
-            popupWindow.dismiss()
-        }
+//        writeReview.setOnClickListener {
+//            openPlayStoreReview(this)
+//            popupWindow.dismiss()
+//        }
 
         appVersion.setOnClickListener {
             showAppVersion()
@@ -905,5 +915,24 @@ class MainActivity : AppCompatActivity() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
+
+
+    fun setToolbarTitleVisible(isVisible: Boolean) {
+        binding.tvToolbarTitle.visibility = if (isVisible) VISIBLE else GONE
+    }
+
+    fun setToolbarTitleWithDrawable(text: String, drawableResId: Int) {
+
+        val prefs = this.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+        val selectedSize = prefs.getString("key_text_size", "medium") ?: "medium"
+        val textSizeValue = getTextSizeValue(selectedSize)
+
+        binding.tvToolbarTitle.text = text
+        val drawable = ContextCompat.getDrawable(binding.tvToolbarTitle.context, drawableResId)
+        binding.tvToolbarTitle.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+        binding.tvToolbarTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeValue)
+
+    }
+
 }
 

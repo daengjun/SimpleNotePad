@@ -22,7 +22,7 @@
     <string name="all_memo">All Memos</string>
     <string name="setting">Settings</string>
     <string name="trash">Trash</string>
-    <string name="select_memo">Multiple selection</string>
+    <string name="select_memo">Multiple Deletion</string>
     <string name="input_folder_name">Please enter folder name</string>
     <string name="remove_all_memo">The entire memo data is deleted.</string>
     <string name="exit_memo_app">Exit Memo App</string>
@@ -46,14 +46,15 @@
     <string name="all_memos_deleted">All memo data has been deleted</string>
     <string name="settings_etc">Other Settings</string>
     <string name="my_folder">My folder</string>
-    <string name="empty_memo_list">There are no memos to choose from</string>
+    <string name="empty_memo_list">Memo does not exist</string>
     <string name="edit">Edit</string>
     <string name="delete_single_memo">Are you sure you want to permanently delete the memo?</string>
     <string name="review">Writing App Reviews</string>
     <string name="update">Proceed with the update</string>
     <string name="empty_trash">No deleted memos</string>
-    <string name="empty_memo">No saved memos</string>
+    <string name="empty_memo">No Memo Written</string>
     <string name="update_cancel">Cancel app updates</string>
     <string name="app_version">Check App Version</string>
     <string name="app_version_prefix">Current App Version :</string>
+    <string name="choice_memo">Select Memo</string>
 </resources>

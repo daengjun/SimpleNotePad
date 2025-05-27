@@ -24,6 +24,7 @@ import com.simple.memo.R
 import com.simple.memo.data.model.MemoEntity
 import com.simple.memo.databinding.FragmentHomeBinding
 import com.simple.memo.ui.common.MemoBottomSheetDialogFragment
+import com.simple.memo.ui.main.MainActivity
 import com.simple.memo.ui.write.WriteMemoFragment
 import com.simple.memo.util.CustomToastMessage
 import com.simple.memo.viewModel.MemoViewModel
@@ -50,13 +51,13 @@ class HomeFragment : Fragment() {
         // null = 모든 메모
         currentFolderName = arguments?.getString("folderName")
         Log.e("TAG", "폴더명 : $currentFolderName")
+        val mainActivity = (requireActivity()) as MainActivity
+        mainActivity.setToolbarTitleVisible(true)
 
         if (currentFolderName == null) {
-            binding.pathTv.text = requireContext().getString(R.string.all_memo)
-            binding.icImageView.setImageResource(R.drawable.ic_home)
+            mainActivity.setToolbarTitleWithDrawable(requireContext().getString(R.string.all_memo), R.drawable.ic_home)
         } else {
-            binding.pathTv.text = currentFolderName
-            binding.icImageView.setImageResource(R.drawable.ic_folder)
+            mainActivity.setToolbarTitleWithDrawable(currentFolderName!!, R.drawable.ic_folder)
         }
 
         val searchBar = requireActivity().findViewById<EditText>(R.id.search_bar)
@@ -158,29 +159,19 @@ class HomeFragment : Fragment() {
                     .commit()
             }
         }
+
+
         return binding.root
     }
 
     private fun observeMemoList() {
         if (currentFolderName == null) {
             memoViewModel.allMemos.observe(viewLifecycleOwner) {
-                if (it.isEmpty()) {
-                    binding.emptyMemoLayout.visibility = VISIBLE
-                    memoAdapter.submitList(it)
-                } else {
-                    binding.emptyMemoLayout.visibility = GONE
-                    memoAdapter.submitList(it)
-                }
+                memoAdapter.submitList(it)
             }
         } else {
             memoViewModel.getMemosByFolder(currentFolderName!!).observe(viewLifecycleOwner) {
-                if (it.isEmpty()) {
-                    binding.emptyMemoLayout.visibility = VISIBLE
-                    memoAdapter.submitList(it)
-                } else {
-                    binding.emptyMemoLayout.visibility = GONE
-                    memoAdapter.submitList(it)
-                }
+                memoAdapter.submitList(it)
             }
         }
     }
@@ -208,12 +199,6 @@ class HomeFragment : Fragment() {
             isMultiSelectMode = true
             memoAdapter.setMultiSelectMode(true)
             binding.fabAdd.setImageResource(R.drawable.ic_delete)
-
-            (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
-                .animate()
-                .alpha(1f)
-                .setDuration(200)
-                .start()
         } else {
             CustomToastMessage.createToast(requireContext(), getString(R.string.empty_memo_list))
                 .show()
@@ -225,12 +210,6 @@ class HomeFragment : Fragment() {
         isMultiSelectMode = false
         memoAdapter.exitMultiSelectMode()
         binding.fabAdd.setImageResource(R.drawable.ic_add_memo)
-
-        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
-            .animate()
-            .alpha(0f)
-            .setDuration(200)
-            .start()
     }
 
     private fun showDeleteConfirmDialog(selectedMemos: List<MemoEntity>) {
@@ -286,6 +265,11 @@ class HomeFragment : Fragment() {
     }
 
     fun isMultiSelectMode(): Boolean = isMultiSelectMode
+
+    fun memoCount(): Int {
+        return memoAdapter.itemCount
+    }
+
 }
 
 

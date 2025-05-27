@@ -14,9 +14,13 @@
         android:paddingEnd="20dp">
 
         <TextView
+            android:gravity="center_vertical"
             android:id="@+id/tvSample"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_info"
+            android:drawablePadding="5dp"
+            android:drawableTint="@color/white"
             android:text="Hello World!"
             android:textColor="@android:color/white"
             android:textSize="15sp"

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,9 +38,12 @@ class MemoPickerFragment : Fragment() {
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_go_write)
 
         viewModel = ViewModelProvider(requireActivity())[MemoViewModel::class.java]
+
+        val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_note_stack)
         (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
             .apply {
-                text = context.getString(R.string.select_memo)
+                setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
+                text = context.getString(R.string.choice_memo)
                 visibility = View.VISIBLE
             }
 

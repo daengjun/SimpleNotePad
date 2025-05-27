@@ -70,13 +70,7 @@ class TrashFragment : Fragment() {
         binding.recyclerMemo.adapter = trashMemoAdapter
 
         memoViewModel.deleteAllMemos.observe(viewLifecycleOwner) { memos ->
-            if (memos.isEmpty()) {
-                binding.emptyTrashLayout.visibility = VISIBLE
-                trashMemoAdapter.submitList(memos)
-            } else {
-                binding.emptyTrashLayout.visibility = GONE
-                trashMemoAdapter.submitList(memos)
-            }
+            trashMemoAdapter.submitList(memos)
         }
 
         binding.fabAdd.setOnClickListener {
@@ -117,13 +111,6 @@ class TrashFragment : Fragment() {
                     .setDuration(200)
                     .start()
             }
-
-            (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
-                .animate()
-                .alpha(1f)
-                .setDuration(200)
-                .start()
-
         } else {
             CustomToastMessage.createToast(requireContext(), getString(R.string.empty_memo_list))
                 .show()
@@ -144,13 +131,6 @@ class TrashFragment : Fragment() {
                 binding.fabAdd.visibility = View.GONE
             }
             .start()
-
-        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
-            .animate()
-            .alpha(0f)
-            .setDuration(200)
-            .start()
-
     }
 
     fun isMultiSelectMode(): Boolean = isMultiSelectMode

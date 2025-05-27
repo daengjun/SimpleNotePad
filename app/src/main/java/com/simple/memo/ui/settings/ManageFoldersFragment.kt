@@ -3,7 +3,10 @@ package com.simple.memo.ui.settings
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.simple.memo.R
 import com.simple.memo.ui.main.MainActivity
+import com.simple.memo.util.TextSizeUtils.getTextSizeValue
 import com.simple.memo.viewModel.MemoViewModel
 
 class ManageFoldersFragment : Fragment(R.layout.fragment_manage_folders) {
@@ -29,6 +33,9 @@ class ManageFoldersFragment : Fragment(R.layout.fragment_manage_folders) {
         loadFolderData()
 
         memoViewModel = ViewModelProvider(this)[MemoViewModel::class.java]
+
+        val mainActivity = (requireActivity()) as MainActivity
+        mainActivity.setToolbarTitleWithDrawable(requireContext().getString(R.string.manage_folder), R.drawable.ic_folder_manager)
 
         adapter = ManageFolderAdapter(
             folderList,
@@ -60,6 +67,8 @@ class ManageFoldersFragment : Fragment(R.layout.fragment_manage_folders) {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
+
+
     }
 
     private fun loadFolderData() {

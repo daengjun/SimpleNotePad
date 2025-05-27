@@ -21,7 +21,7 @@
             android:gravity="center"
             android:paddingVertical="15dp"
             android:text="@string/share"
-            android:textColor="#1171D1"
+            android:textColor="@color/black"
             android:textSize="17sp" />
 
         <View

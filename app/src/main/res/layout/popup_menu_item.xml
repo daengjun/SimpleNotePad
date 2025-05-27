@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:drawableStart="@drawable/ic_check"
+            android:drawableStart="@drawable/ic_solid_delete"
             android:drawablePadding="10dp"
             android:foreground="?attr/selectableItemBackground"
             android:minWidth="180dp"
@@ -31,30 +31,6 @@
 
         <LinearLayout
             android:id="@+id/line1"
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="#90524F4F"
-            android:orientation="vertical" />
-
-        <TextView
-            android:id="@+id/write_review"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:drawableStart="@drawable/ic_half_star"
-            android:drawablePadding="10dp"
-            android:foreground="?attr/selectableItemBackground"
-            android:minWidth="180dp"
-            android:paddingStart="20dp"
-            android:paddingTop="16dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="16dp"
-            android:text="@string/review"
-            android:textColor="@android:color/black"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:id="@+id/line2"
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:background="#90524F4F"

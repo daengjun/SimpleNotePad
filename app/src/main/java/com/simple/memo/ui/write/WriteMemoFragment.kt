@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.simple.memo.R
 import com.simple.memo.data.model.MemoEntity
 import com.simple.memo.databinding.FragmentWriteMemoBinding
+import com.simple.memo.ui.main.MainActivity
 import com.simple.memo.util.TextSizeUtils.getTextSizeValue
 import com.simple.memo.viewModel.MemoViewModel
 import java.text.SimpleDateFormat
@@ -43,14 +45,17 @@ class WriteMemoFragment : Fragment() {
 
         originalMemo = arguments?.getSerializable(ARG_MEMO) as? MemoEntity
 
-        if (originalMemo == null) {
-            currentFolderName = arguments?.getString(ARG_FOLDER_NAME) ?: "기본"
+        currentFolderName = if (originalMemo == null) {
+            arguments?.getString(ARG_FOLDER_NAME) ?: "기본"
         } else {
-            currentFolderName = originalMemo!!.folderName
+            originalMemo!!.folderName
         }
         originalMemo?.let {
             binding.editTextMemo.setText(it.content)
         }
+
+        val mainActivity = (requireActivity()) as MainActivity
+        mainActivity.setToolbarTitleVisible(false)
 
         return binding.root
     }
@@ -99,6 +104,7 @@ class WriteMemoFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         _binding = null
     }
 

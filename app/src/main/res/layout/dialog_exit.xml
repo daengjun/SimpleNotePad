@@ -11,6 +11,9 @@
         android:layout_height="50dp"
         android:layout_marginBottom="16dp"
         android:background="#FE353333"
+        android:drawableStart="@drawable/ic_exit"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/white"
         android:gravity="start|center_vertical"
         android:paddingStart="15dp"
         android:text="@string/exit_memo_app"
@@ -23,12 +26,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:paddingTop="12dp"
-        android:textColor="@color/black"
-        android:paddingBottom="12dp"
         android:paddingStart="15dp"
+        android:paddingTop="12dp"
         android:paddingEnd="15dp"
+        android:paddingBottom="12dp"
         android:text="@string/exit_app"
+        android:textColor="@color/black"
         android:textSize="17sp" />
 
     <LinearLayout

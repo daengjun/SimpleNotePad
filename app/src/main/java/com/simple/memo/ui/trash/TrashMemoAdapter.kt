@@ -62,7 +62,7 @@ class TrashMemoAdapter(
 
             val isSelected = selectedMemos.any { it.id == memo.id }
             containerLayout.setBackgroundColor(
-                if (isSelected) "#7EB1AFAF".toColorInt()
+                if (isSelected) "#74B8B4B4".toColorInt()
                 else Color.WHITE
             )
 

@@ -43,6 +43,9 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val mainActivity = (requireActivity()) as MainActivity
+        mainActivity.setToolbarTitleWithDrawable(requireContext().getString(R.string.setting), R.drawable.ic_settings)
+
         val prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         when (prefs.getString(KEY_TEXT_SIZE, "medium")) {
