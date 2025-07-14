@@ -89,8 +89,3 @@ Android Studio에서 열고 실행하면 됩니다.
 - GitHub: [daengjun](https://github.com/daengjun)
 - Email: jundroidx@gmail.com
 
----
-
-## 📄 라이선스
-
-MIT License. 자유롭게 사용하세요!  
