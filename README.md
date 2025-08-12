@@ -46,8 +46,6 @@
 
 ### ▶️ [Play Store에서 설치](https://play.google.com/store/apps/details?id=com.simple.memo)
 
-또는 APK로 직접 설치할 수 있습니다 (릴리즈 탭 참고 예정).
-
 ---
 
 ## 📂 프로젝트 구조
