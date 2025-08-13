@@ -4,8 +4,6 @@
 
 > **광고 없는 심플한 메모 앱. 위젯으로 빠르게 확인하고 기록하세요!** </br>
 
----
-
 ## 소개
 
 **Simple Notepad**는 텍스트 기록에 집중한 간단한 메모 앱입니다.  
@@ -36,11 +34,6 @@
 |-----------|-----------|
 | ![Setting](https://github.com/user-attachments/assets/f1a885c9-9c92-46c4-bafb-bd63e78b9789) | ![Widget](https://github.com/user-attachments/assets/76b16daf-b6c2-4329-8db0-8345e5e57059) | </br>
 
-## 🚀 설치하기
-
-### ▶️ [Play Store에서 설치](https://play.google.com/store/apps/details?id=com.simple.memo) </br>
-
----
 
 ## 📂 프로젝트 구조
 
@@ -50,15 +43,6 @@ com.simple.memo
 ├── util         # 공통 유틸리티 (텍스트 사이즈 등)
 ├── viewModel    # ViewModel 및 상태 관리 </br>
 ```
-
-## 📦 다운로드 및 실행 
-
-```bash
-git clone https://github.com/daengjun/SimpleNotePad.git
-```
-
-Android Studio에서 열고 실행하면 됩니다.  
-`minSdk 24`, `targetSdk 34`
 
 ## 🛠 사용된 기술 스택
 
