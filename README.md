@@ -49,5 +49,5 @@ com.simple.memo
 ## 🙋‍♂️ 개발자
 
 - GitHub: [daengjun](https://github.com/daengjun)
-- Email: jundroidx@gmail.com
+- Email: jundroidx@gmail.com  
 [![PlayStore](https://img.shields.io/badge/Download-Google%20Play-34A853?logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.simple.memo)
