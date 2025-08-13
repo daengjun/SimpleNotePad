@@ -1,6 +1,6 @@
 # 📝 Simple Notepad
 
-> **광고 없는 심플한 메모 앱. 위젯으로 빠르게 확인하고 기록하세요!**
+> **광고 없는 심플한 메모 앱. 위젯으로 빠르게 확인하고 기록하세요!**  
 [![PlayStore](https://img.shields.io/badge/Download-Google%20Play-34A853?logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.simple.memo)
 
 ## 소개
@@ -37,10 +37,10 @@
 ## 📂 프로젝트 구조
 
 com.simple.memo
-├── data         # Room 관련 (MemoEntity, MemoDao 등)
-├── ui           # UI 구성 (Fragment, Adapter, Activity 등)
-├── util         # 공통 유틸리티 (텍스트 사이즈 등)
-├── viewModel    # ViewModel 및 상태 관리  
+├── data         # Room 관련 (MemoEntity, MemoDao 등)  
+├── ui           # UI 구성 (Fragment, Adapter, Activity 등)  
+├── util         # 공통 유틸리티 (텍스트 사이즈 등)  
+├── viewModel    # ViewModel 및 상태 관리   
 
 ## 🛠 사용된 기술 스택
 
