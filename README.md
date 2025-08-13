@@ -41,7 +41,7 @@ com.simple.memo
 ├── data         # Room 관련 (MemoEntity, MemoDao 등)
 ├── ui           # UI 구성 (Fragment, Adapter, Activity 등)
 ├── util         # 공통 유틸리티 (텍스트 사이즈 등)
-├── viewModel    # ViewModel 및 상태 관리 </br>
+├── viewModel    # ViewModel 및 상태 관리
 ```
 
 ## 🛠 사용된 기술 스택
