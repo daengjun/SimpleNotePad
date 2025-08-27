@@ -15,9 +15,9 @@ android {
     defaultConfig {
         applicationId = "com.simple.memo"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 8
-        versionName = "1.0.3"
+        targetSdk = 35
+        versionCode = 9
+        versionName = "1.0.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
