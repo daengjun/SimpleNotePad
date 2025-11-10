@@ -90,11 +90,11 @@ class MemoPickerFragment : Fragment() {
         /*
         * 텍스트 사이즈 변경시 즉시 반영
         * */
-        val prefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
-        val selectedSize = prefs.getString("key_text_size", "medium") ?: "medium"
-        val textSizeValue = getTextSizeValue(selectedSize)
-        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
-            .setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeValue)
+//        val prefs = requireContext().getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+//        val selectedSize = prefs.getString("key_text_size", "medium") ?: "medium"
+//        val textSizeValue = getTextSizeValue(selectedSize)
+//        (requireActivity() as AppCompatActivity).findViewById<TextView>(R.id.tv_toolbar_title)
+//            .setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeValue)
         adapter.notifyDataSetChanged()
     }
 }

@@ -2,6 +2,7 @@ package com.simple.memo.ui.home
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -55,7 +56,10 @@ class HomeFragment : Fragment() {
         mainActivity.setToolbarTitleVisible(true)
 
         if (currentFolderName == null) {
-            mainActivity.setToolbarTitleWithDrawable(requireContext().getString(R.string.all_memo), R.drawable.ic_home)
+            mainActivity.setToolbarTitleWithDrawable(
+                requireContext().getString(R.string.all_memo),
+                R.drawable.ic_home
+            )
         } else {
             mainActivity.setToolbarTitleWithDrawable(currentFolderName!!, R.drawable.ic_folder)
         }

@@ -3,4 +3,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorRed">#FF0000</color>
+    <color name="trans_black">#3BE4DDDD</color>
+
 </resources>

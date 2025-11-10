@@ -51,6 +51,7 @@ import com.simple.memo.data.local.MemoDatabase
 import com.simple.memo.viewModel.MemoViewModel
 import kotlinx.coroutines.launch
 import androidx.core.content.edit
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.play.core.appupdate.AppUpdateInfo
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -396,9 +397,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun animateSearchBar(show: Boolean) {
+
         val duration = 250L
         if (show) {
-
             binding.searchBar.visibility = VISIBLE
             binding.searchBar.alpha = 0f
             binding.searchBar.translationY = -binding.searchBar.height.toFloat()
@@ -439,31 +440,70 @@ class MainActivity : AppCompatActivity() {
             binding.customMenuList.folderRecyclerView.pivotY = 0f
 
             if (isFolderExpanded) {
-                // 접기
-                binding.customMenuList.folderRecyclerView.animate()
-                    .scaleY(0f)
+                // 접기: 살짝 위로 올리며 사라지기
+                val rv = binding.customMenuList.folderRecyclerView
+                rv.animate().cancel()
+
+                rv.animate()
+                    .translationY(-rv.dp(16))   // 위로 16dp
                     .alpha(0f)
-                    .setDuration(200)
+                    .setDuration(220)
+                    .setInterpolator(FastOutSlowInInterpolator())
                     .withEndAction {
-                        binding.customMenuList.folderRecyclerView.visibility = View.GONE
+                        rv.visibility = View.GONE
+                        rv.translationY = 0f     // 상태 초기화
                     }
                     .start()
-                rotateArrow(toggleIcon, true)
-            } else {
-                // 펼치기
-                binding.customMenuList.folderRecyclerView.visibility = View.VISIBLE
-                binding.customMenuList.folderRecyclerView.scaleY = 0f
-                binding.customMenuList.folderRecyclerView.alpha = 0f
-                binding.customMenuList.folderRecyclerView.pivotY = 0f // 중요
-                binding.customMenuList.folderRecyclerView.animate()
-                    .scaleY(1f)
-                    .alpha(1f)
-                    .setDuration(200)
-                    .start()
+
                 rotateArrow(toggleIcon, false)
+
+            } else {
+                // 펼치기: 위에서 아래로 스르륵 + 페이드 인
+                val rv = binding.customMenuList.folderRecyclerView
+                rv.animate().cancel()
+
+                rv.visibility = View.VISIBLE
+                rv.alpha = 0f
+                rv.translationY = -rv.dp(16)    // 시작은 살짝 위
+
+                rv.animate()
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(220)
+                    .setInterpolator(FastOutSlowInInterpolator())
+                    .start()
+
+                rotateArrow(toggleIcon, true)
             }
 
             isFolderExpanded = !isFolderExpanded
+
+//            if (isFolderExpanded) {
+//                // 접기
+//                binding.customMenuList.folderRecyclerView.animate()
+//                    .scaleY(0f)
+//                    .alpha(0f)
+//                    .setDuration(200)
+//                    .withEndAction {
+//                        binding.customMenuList.folderRecyclerView.visibility = View.GONE
+//                    }
+//                    .start()
+//                rotateArrow(toggleIcon, false)
+//            } else {
+//                // 펼치기
+//                binding.customMenuList.folderRecyclerView.visibility = View.VISIBLE
+//                binding.customMenuList.folderRecyclerView.scaleY = 0f
+//                binding.customMenuList.folderRecyclerView.alpha = 0f
+//                binding.customMenuList.folderRecyclerView.pivotY = 0f // 중요
+//                binding.customMenuList.folderRecyclerView.animate()
+//                    .scaleY(1f)
+//                    .alpha(1f)
+//                    .setDuration(200)
+//                    .start()
+//                rotateArrow(toggleIcon, true)
+//            }
+//
+//            isFolderExpanded = !isFolderExpanded
             saveFolderExpandedState(isFolderExpanded)
         }
 
@@ -536,6 +576,10 @@ class MainActivity : AppCompatActivity() {
         selectedMenu = menuHome
         selectedMenu?.isSelected = true
     }
+
+    // dp → px 헬퍼
+    private fun View.dp(value: Int): Float = value * resources.displayMetrics.density
+
 
     private fun updateSelectedMenu(newSelected: View) {
         selectedMenu?.isSelected = false
@@ -756,7 +800,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun rotateArrow(view: View, expanded: Boolean) {
-        val to = if (expanded) -90f else 0f
+        val to = if (expanded) 180f else 0f
         view.animate()
             .rotation(to)
             .setDuration(260)
@@ -772,10 +816,10 @@ class MainActivity : AppCompatActivity() {
 
         if (isFolderExpanded) {
             binding.customMenuList.folderRecyclerView.visibility = View.VISIBLE
-            toggleIcon.rotation = 0f
+            toggleIcon.rotation = 180f
         } else {
             binding.customMenuList.folderRecyclerView.visibility = View.GONE
-            toggleIcon.rotation = -90f
+            toggleIcon.rotation = 0f
         }
     }
 
@@ -923,14 +967,14 @@ class MainActivity : AppCompatActivity() {
 
     fun setToolbarTitleWithDrawable(text: String, drawableResId: Int) {
 
-        val prefs = this.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
-        val selectedSize = prefs.getString("key_text_size", "medium") ?: "medium"
-        val textSizeValue = getTextSizeValue(selectedSize)
+//        val prefs = this.getSharedPreferences("settings_prefs", Context.MODE_PRIVATE)
+//        val selectedSize = prefs.getString("key_text_size", "medium") ?: "medium"
+//        val textSizeValue = getTextSizeValue(selectedSize)
 
         binding.tvToolbarTitle.text = text
         val drawable = ContextCompat.getDrawable(binding.tvToolbarTitle.context, drawableResId)
         binding.tvToolbarTitle.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
-        binding.tvToolbarTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeValue)
+//        binding.tvToolbarTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSizeValue)
 
     }
 
