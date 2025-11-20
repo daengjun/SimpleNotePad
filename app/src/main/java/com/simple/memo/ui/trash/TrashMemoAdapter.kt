@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.graphics.toColorInt
@@ -42,6 +43,7 @@ class TrashMemoAdapter(
         private val containerLayout: LinearLayout = itemView.findViewById(R.id.containerLayout)
         private val tvContent: TextView = itemView.findViewById(R.id.tv_content)
         private val tvDate: TextView = itemView.findViewById(R.id.tv_date)
+        private val cbSelect: CheckBox = itemView.findViewById(R.id.cb_select)
 
         fun bind(memo: MemoEntity) {
             tvContent.text = memo.content
@@ -61,15 +63,37 @@ class TrashMemoAdapter(
             tvDate.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize)
 
             val isSelected = selectedMemos.any { it.id == memo.id }
+
+            // 멀티선택 모드일 때만 체크박스 보이기
+            cbSelect.visibility = if (isMultiSelectMode) View.VISIBLE else View.GONE
+
+            cbSelect.setOnCheckedChangeListener(null)
+            cbSelect.isChecked = isSelected
+
             containerLayout.setBackgroundColor(
                 if (isSelected) "#74B8B4B4".toColorInt()
                 else Color.WHITE
             )
 
+            cbSelect.setOnCheckedChangeListener { _, checked ->
+                if (!isMultiSelectMode) return@setOnCheckedChangeListener
+
+                if (checked) {
+                    addSelection(memo)
+                } else {
+                    removeSelection(memo)
+                }
+                notifyItemChanged(bindingAdapterPosition)
+            }
+
             itemView.setOnClickListener {
                 if (isMultiSelectMode) {
-                    toggleSelection(memo)
-                    notifyItemChanged(adapterPosition)
+                    if (selectedMemos.any { it.id == memo.id }) {
+                        removeSelection(memo)
+                    } else {
+                        addSelection(memo)
+                    }
+                    notifyItemChanged(bindingAdapterPosition)
                 } else {
                     onItemClick(memo)
                 }
@@ -80,7 +104,7 @@ class TrashMemoAdapter(
                 true
             }
 
-            // 터치시 살짝 작아지는 애니메이션
+            // 터치시 살짝 작아지는 애니메이션 (멀티 선택 모드 아닐 때만)
             itemView.setOnTouchListener { v, event ->
                 if (!isMultiSelectMode) {
                     when (event.action) {
@@ -92,18 +116,19 @@ class TrashMemoAdapter(
                             v.animate().scaleX(1f).scaleY(1f).setDuration(100).start()
                         }
                     }
-
                 }
                 false
             }
         }
 
-        private fun toggleSelection(memo: MemoEntity) {
-            if (selectedMemos.contains(memo)) {
-                selectedMemos.remove(memo)
-            } else {
+        private fun addSelection(memo: MemoEntity) {
+            if (selectedMemos.none { it.id == memo.id }) {
                 selectedMemos.add(memo)
             }
+        }
+
+        private fun removeSelection(memo: MemoEntity) {
+            selectedMemos.removeAll { it.id == memo.id }
         }
     }
 
@@ -117,12 +142,16 @@ class TrashMemoAdapter(
     }
 
     fun toggleMemoSelection(memo: MemoEntity) {
-        if (selectedMemos.contains(memo)) {
-            selectedMemos.remove(memo)
+        if (selectedMemos.any { it.id == memo.id }) {
+            selectedMemos.removeAll { it.id == memo.id }
         } else {
             selectedMemos.add(memo)
         }
-        notifyItemChanged(currentList.indexOf(memo))
+
+        val index = currentList.indexOfFirst { it.id == memo.id }
+        if (index != -1) {
+            notifyItemChanged(index)
+        }
     }
 }
 
