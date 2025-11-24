@@ -20,9 +20,22 @@
 -  **폴더별 분류**  
   메모를 원하는 폴더로 나눠 정리할 수 있어요
 
+## 실제 동작 화면  
+
+| 화면 | 설명 |
+| ---- | ---- |
+| ![memo_create](app/src/main/assets/memo_create.gif) | **신규 작성**<br>새 메모를 생성하고 내용을 작성할 수 있는 화면입니다. |
+| ![memo_delete_restore](app/src/main/assets/memo_delete_restore.gif) | **메모 삭제 및 복구**<br>삭제한 메모는 휴지통으로 이동하며 휴지통에서 다시 복원할 수 있습니다. |
+| ![search](app/src/main/assets/search.gif) | **메모 검색**<br>보관 중인 메모 중 원하는 내용을 검색해 빠르게 찾아볼 수 있습니다. |
+| ![memo_multi_delete](app/src/main/assets/memo_multi_delete.gif) | **다중 삭제**<br>여러 메모를 한 번에 선택해 일괄 삭제할 수 있는 기능입니다. |
+| ![add_folder](app/src/main/assets/add_folder.gif) | **폴더 추가**<br>새 폴더를 생성하여 폴더별로 메모를 정리하고 작성할 수 있습니다. |
+| ![widget_add](app/src/main/assets/widget_add.gif) | **위젯 추가**<br>홈 화면에 메모 위젯을 추가해 앱을 열지 않아도 메모를 바로 확인할 수 있습니다. |
+| ![widget_realtime_update](app/src/main/assets/widget_realtime_update.gif) | **위젯 실시간 반영**<br>앱에서 메모 내용을 수정하면 위젯에도 즉시 반영됩니다. |
+| ![widget_scroll](app/src/main/assets/widget_scroll.gif) | **위젯 스크롤**<br>내용이 긴 메모도 위젯에서 스크롤을 통해 확인할 수 있습니다. |  
+
 ## DB 구조
 
-<img width="1920" height="1080" alt="Untitled_1" src="https://github.com/user-attachments/assets/ce1e9159-3f41-4d66-8ff3-5962132a761e" />
+![DB](app/src/main/assets/DB.png)
 
 ## 화면 캡쳐 
 
