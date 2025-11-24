@@ -20,6 +20,27 @@
 -  **폴더별 분류**  
   메모를 원하는 폴더로 나눠 정리할 수 있어요
 
+## 사용된 기술 스택
+
+- Kotlin
+- MVVM + ViewModel
+- Room Database
+- DataBinding
+- AppWidgetProvider (위젯)
+- Material3 Components    
+
+## 프로젝트 구조
+
+com.simple.memo  
+├── data         # Room 관련 (MemoEntity, MemoDao 등)  
+├── ui           # UI 구성 (Fragment, Adapter, Activity 등)  
+├── util         # 공통 유틸리티 (텍스트 사이즈 등)  
+├── viewModel    # ViewModel 및 상태 관리  
+
+## DB 구조
+
+![DB](app/src/main/assets/DB.png)  
+
 ## 실제 동작 화면  
 
 | 화면 | 설명 |
@@ -33,10 +54,6 @@
 | ![widget_realtime_update](app/src/main/assets/widget_realtime_update.gif) | **위젯 실시간 반영**<br>앱에서 메모 내용을 수정하면 위젯에도 즉시 반영됩니다. |
 | ![widget_scroll](app/src/main/assets/widget_scroll.gif) | **위젯 스크롤**<br>내용이 긴 메모도 위젯에서 스크롤을 통해 확인할 수 있습니다. |  
 
-## DB 구조
-
-![DB](app/src/main/assets/DB.png)
-
 ## 화면 캡쳐 
 
 | 전체 메모 | 글쓰기 화면 |
@@ -47,25 +64,7 @@
 |-----------|-----------|
 | ![Setting](https://github.com/user-attachments/assets/f1a885c9-9c92-46c4-bafb-bd63e78b9789) | ![Widget](https://github.com/user-attachments/assets/76b16daf-b6c2-4329-8db0-8345e5e57059) |
 
-
-## 📂 프로젝트 구조
-
-com.simple.memo  
-├── data         # Room 관련 (MemoEntity, MemoDao 등)  
-├── ui           # UI 구성 (Fragment, Adapter, Activity 등)  
-├── util         # 공통 유틸리티 (텍스트 사이즈 등)  
-├── viewModel    # ViewModel 및 상태 관리   
-
-## 🛠 사용된 기술 스택
-
-- Kotlin
-- MVVM + ViewModel
-- Room Database
-- DataBinding
-- AppWidgetProvider (위젯)
-- Material3 Components
-
-## 🙋‍♂️ 개발자
+## 개발자
 
 - GitHub: [daengjun](https://github.com/daengjun)
 - Email: jundroidx@gmail.com  
