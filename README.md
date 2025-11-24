@@ -1,8 +1,6 @@
 # 📝 Simple Notepad  
 
   
-![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white)
-![Android](https://img.shields.io/badge/Android-3DDC84?style=flat&logo=android&logoColor=white)
 [![PlayStore](https://img.shields.io/badge/Download-Google%20Play-34A853?logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.simple.memo)  
 **Simple Notepad**는 텍스트 기록에 집중한 간단한 메모 앱입니다.  
 필요한 기능만 담아 누구나 쉽게 쓸 수 있도록 제작되었습니다.  
