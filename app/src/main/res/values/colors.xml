@@ -4,5 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="colorRed">#FF0000</color>
     <color name="trans_black">#3BE4DDDD</color>
+    <color name="memo_select_color">#51BAB5B5</color>
 
 </resources>

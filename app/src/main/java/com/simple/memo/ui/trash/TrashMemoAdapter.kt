@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -71,7 +72,7 @@ class TrashMemoAdapter(
             cbSelect.isChecked = isSelected
 
             containerLayout.setBackgroundColor(
-                if (isSelected) "#74B8B4B4".toColorInt()
+                if (isSelected) ContextCompat.getColor(itemView.context, R.color.memo_select_color)
                 else Color.WHITE
             )
 

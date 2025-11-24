@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -73,7 +74,7 @@ class MemoAdapter(
 
             containerLayout.setBackgroundColor(
                 if (isSelected) {
-                    "#51BAB5B5".toColorInt()
+                    ContextCompat.getColor(itemView.context, R.color.memo_select_color)
                 } else {
                     Color.WHITE
                 }
@@ -148,6 +149,7 @@ class MemoAdapter(
         holder.bind(getItem(position))
     }
 }
+
 class MemoDiffCallback : DiffUtil.ItemCallback<MemoEntity>() {
     override fun areItemsTheSame(oldItem: MemoEntity, newItem: MemoEntity): Boolean {
         return oldItem.id == newItem.id
