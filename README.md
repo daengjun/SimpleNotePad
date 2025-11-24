@@ -45,8 +45,8 @@ com.simple.memo
 
 | 화면 | 설명 |
 | ---- | ---- |
-| ![memo_create](app/src/main/assets/memo_create.gif) | **신규 작성**<br>새 메모를 생성하고 내용을 작성할 수 있는 화면입니다. |
-| ![memo_delete_restore](app/src/main/assets/memo_delete_restore.gif) | **메모 삭제 및 복구**<br>삭제한 메모는 휴지통으로 이동하며 휴지통에서 다시 복원할 수 있습니다. |
+| ![memo_create](app/src/main/assets/memo_create.gif) | **신규 작성**<br>원하는 내용을 입력하여 신규 메모를 생성합니다. |
+| ![memo_delete_restore](app/src/main/assets/memo_delete_restore.gif) | **메모 삭제 및 복구**<br>메모를 삭제하고 복원할 수 있습니다. |
 | ![search](app/src/main/assets/search.gif) | **메모 검색**<br>보관 중인 메모 중 원하는 내용을 검색해 빠르게 찾아볼 수 있습니다. |
 | ![memo_multi_delete](app/src/main/assets/memo_multi_delete.gif) | **다중 삭제**<br>여러 메모를 한 번에 선택해 일괄 삭제할 수 있는 기능입니다. |
 | ![add_folder](app/src/main/assets/add_folder.gif) | **폴더 추가**<br>새 폴더를 생성하여 폴더별로 메모를 정리하고 작성할 수 있습니다. |
